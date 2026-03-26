@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGL · QA Call Intelligence Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --bg2: #13151c;
+    --bg3: #1a1d26;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --accent: #c8a96e;
+    --accent2: #e2c98a;
+    --green: #22c55e;
+    --green-bg: rgba(34,197,94,0.08);
+    --red: #ef4444;
+    --red-bg: rgba(239,68,68,0.08);
+    --amber: #f59e0b;
+    --amber-bg: rgba(245,158,11,0.08);
+    --blue: #60a5fa;
+    --blue-bg: rgba(96,165,250,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .logo span {
+    color: var(--text);
+    font-weight: 400;
+    font-size: 0.75rem;
+    display: block;
+    letter-spacing: 0.15em;
+    margin-top: -2px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .report-meta {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-align: right;
+    letter-spacing: 0.04em;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* LAYOUT */
+  main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 40px 80px;
+  }
+
+  /* HERO SECTION */
+  .hero {
+    margin-bottom: 48px;
+    padding: 48px 0 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    max-width: 540px;
+    line-height: 1.7;
+  }
+
+  /* SECTION LABELS */
+  .section-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    font-family: 'DM Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* STATS GRID */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .stat-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .stat-card.green::before { background: var(--green); }
+  .stat-card.red::before { background: var(--red); }
+  .stat-card.amber::before { background: var(--amber); }
+  .stat-card.blue::before { background: var(--blue); }
+  .stat-card.gold::before { background: var(--accent); }
+
+  .stat-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-family: 'DM Mono', monospace;
+  }
+  .stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-card.green .stat-value { color: var(--green); }
+  .stat-card.red .stat-value { color: var(--red); }
+  .stat-card.amber .stat-value { color: var(--amber); }
+  .stat-card.blue .stat-value { color: var(--blue); }
+  .stat-card.gold .stat-value { color: var(--accent); }
+
+  .stat-sub {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  /* AM PERFORMANCE TABLE */
+  .am-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .am-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .am-card:hover { border-color: var(--border2); }
+  .am-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .am-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .am-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .am-score-badge {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    text-align: center;
+  }
+  .am-score-badge .score-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    line-height: 1;
+  }
+  .am-score-badge .score-label {
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    font-family: 'DM Mono', monospace;
+  }
+  .dim-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .dim-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .dim-name {
+    font-size: 0.68rem;
+    color: var(--muted);
+    width: 90px;
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+  }
+  .dim-bar-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--bg3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .dim-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--accent);
+    transition: width 0.6s ease;
+  }
+  .dim-val {
+    font-size: 0.68rem;
+    color: var(--text);
+    width: 20px;
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+  }
+  .am-flags {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .flag-pill {
+    font-size: 0.65rem;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+  }
+  .flag-pill.alert { background: var(--red-bg); color: var(--red); }
+  .flag-pill.watch { background: var(--amber-bg); color: var(--amber); }
+  .flag-pill.ok { background: var(--green-bg); color: var(--green); }
+
+  /* ALERT SECTION */
+  .alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+  .alert-row {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: start;
+    transition: border-color 0.2s;
+  }
+  .alert-row:hover { border-color: var(--border2); }
+  .alert-row.sev-alert { border-left-color: var(--red); }
+  .alert-row.sev-watch { border-left-color: var(--amber); }
+  .alert-icon { font-size: 1rem; padding-top: 2px; }
+  .alert-body .alert-client {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .alert-body .alert-am {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 8px;
+  }
+  .alert-body .alert-summary {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    line-height: 1.55;
+  }
+  .alert-meta {
+    text-align: right;
+    min-width: 80px;
+  }
+  .alert-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    display: block;
+    line-height: 1;
+  }
+  .alert-row.sev-alert .alert-score { color: var(--red); }
+  .alert-row.sev-watch .alert-score { color: var(--amber); }
+  .alert-date {
+    font-size: 0.65rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-top: 4px;
+    display: block;
+  }
+  .alert-flags-mini {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 10px;
+  }
+  .flag-item {
+    font-size: 0.7rem;
+    color: #9ca3af;
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    line-height: 1.4;
+  }
+  .flag-item::before { content: '↳'; color: var(--muted); flex-shrink: 0; }
+
+  /* CALL TABLE */
+  .table-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 48px;
+  }
+  .table-toolbar {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .search-box {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    outline: none;
+    width: 240px;
+    transition: border-color 0.2s;
+  }
+  .search-box::placeholder { color: var(--muted); }
+  .search-box:focus { border-color: var(--accent); }
+  .filter-group {
+    display: flex;
+    gap: 6px;
+  }
+  .filter-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(200,169,110,0.06);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead th {
+    padding: 10px 16px;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  tbody td {
+    padding: 12px 16px;
+    font-size: 0.8rem;
+    vertical-align: middle;
+  }
+  .td-client { font-weight: 600; color: var(--text); }
+  .td-am { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.7rem; }
+  .td-date { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.7rem; white-space: nowrap; }
+  .td-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+  .score-high { color: var(--green); }
+  .score-mid { color: var(--accent); }
+  .score-low { color: var(--red); }
+  .td-quote {
+    font-size: 0.72rem;
+    color: #9ca3af;
+    font-style: italic;
+    max-width: 280px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sev-badge {
+    font-size: 0.62rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+  }
+  .sev-ok { background: var(--green-bg); color: var(--green); }
+  .sev-alert { background: var(--red-bg); color: var(--red); }
+  .sev-watch { background: var(--amber-bg); color: var(--amber); }
+  .sev-dot-ok::before { content: '🟢 '; }
+  .sev-dot-alert::before { content: '🔴 '; }
+  .sev-dot-watch::before { content: '⚠️ '; }
+
+  .sentiment-pos { color: var(--green); font-size: 0.72rem; }
+  .sentiment-neg { color: var(--red); font-size: 0.72rem; }
+  .sentiment-neu { color: var(--amber); font-size: 0.72rem; }
+
+  /* TRENDS */
+  .trends-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  @media(max-width: 900px) { .trends-grid { grid-template-columns: 1fr; } }
+
+  .trend-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .trend-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+  .trend-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .trend-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .trend-name {
+    font-size: 0.72rem;
+    color: var(--muted);
+    width: 130px;
+    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+  }
+  .trend-bar-bg {
+    flex: 1;
+    height: 6px;
+    background: var(--bg3);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .trend-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.8s ease;
+  }
+  .trend-val {
+    font-size: 0.72rem;
+    width: 32px;
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+  }
+
+  /* INSIGHT CARDS */
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .insight-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .insight-icon {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+  }
+  .insight-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .insight-body {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 700px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 32px;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+  }
+  .modal-client {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .modal-meta {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 24px;
+  }
+  .modal-section {
+    margin-bottom: 20px;
+  }
+  .modal-section-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-family: 'DM Mono', monospace;
+  }
+  .modal-quote {
+    background: var(--bg3);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    font-style: italic;
+    font-size: 0.88rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .modal-dims {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .modal-dim {
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+  }
+  .modal-dim-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+  }
+  .modal-dim-name {
+    font-size: 0.62rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-top: 2px;
+  }
+  .modal-flags-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .modal-flag {
+    display: flex;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: #9ca3af;
+    line-height: 1.5;
+    padding: 8px 12px;
+    background: var(--bg3);
+    border-radius: 6px;
+  }
+  .modal-flag.red { border-left: 2px solid var(--red); }
+  .modal-flag.amber { border-left: 2px solid var(--amber); }
+  .modal-summary-text {
+    font-size: 0.82rem;
+    color: #9ca3af;
+    line-height: 1.7;
+  }
+  .modal-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent);
+    font-size: 0.78rem;
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    padding: 6px 12px;
+    background: rgba(200,169,110,0.06);
+    border: 1px solid rgba(200,169,110,0.2);
+    border-radius: 6px;
+    margin-top: 8px;
+    transition: background 0.2s;
+  }
+  .modal-link:hover { background: rgba(200,169,110,0.12); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+  }
+
+  /* ROW HIDDEN */
+  .row-hidden { display: none !important; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* AM TREND SECTION */
+  .am-trend-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 48px;
+  }
+  .am-trend-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+  }
+  .am-tab-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .am-tab-btn:hover { border-color: var(--border2); color: var(--text); }
+  .am-tab-btn.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
+  .am-trend-chart-box {
+    position: relative;
+    width: 100%;
+    height: 320px;
+    margin-bottom: 24px;
+  }
+  .am-trend-chart-box canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .am-radar-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .am-radar-card {
+    background: var(--bg3);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .am-radar-name {
+    font-size: 0.68rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .am-radar-canvas-wrap {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+  }
+
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      AGL <span>Amazon Growth Lab</span>
+    </div>
+    <div class="report-meta">
+      QA Call Intelligence Report<br>
+      Period: Dec 2025 – Mar 2026 · <span id="callCount">66</span> Calls
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Client Call <em>Performance</em><br>Leadership Report</h1>
+    <p>Aggregate analysis across all evaluated client calls. Click any row in the call log to view full call detail, scoring, and red flags.</p>
+  </div>
+
+  <!-- STATS OVERVIEW -->
+  <div class="section-label">Overview Metrics</div>
+  <div class="stats-grid">
+    <div class="stat-card gold">
+      <div class="stat-label">Total Calls Evaluated</div>
+      <div class="stat-value">66</div>
+      <div class="stat-sub">Dec 2025 – Mar 2026</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">OK / No Issue</div>
+      <div class="stat-value">53</div>
+      <div class="stat-sub">80.3% of all calls</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-label">🔴 Alerts</div>
+      <div class="stat-value">9</div>
+      <div class="stat-sub">13.6% — requires action</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="stat-label">⚠️ Watchlist</div>
+      <div class="stat-value">4</div>
+      <div class="stat-sub">6.1% — monitor closely</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">Avg. Score (All Calls)</div>
+      <div class="stat-value">4.07</div>
+      <div class="stat-sub">Out of 5.0 composite</div>
+    </div>
+    <div class="stat-card gold">
+      <div class="stat-label">Positive Sentiment</div>
+      <div class="stat-value">84%</div>
+      <div class="stat-sub">Of evaluated calls</div>
+    </div>
+  </div>
+
+  <!-- KEY INSIGHTS -->
+  <div class="section-label">Leadership Insights</div>
+  <div class="insights-grid" style="margin-bottom:48px;">
+    <div class="insight-card">
+      <div class="insight-icon">🔁</div>
+      <div class="insight-title">Recurring Gap: Action Item Ownership</div>
+      <div class="insight-body">Nearly every call review surfaces the same coaching note — verbal next steps are agreed but owners and deadlines are not explicitly assigned. This appears across all AMs and is the top systemic improvement area.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">📉</div>
+      <div class="insight-title">3 Accounts at Churn Risk</div>
+      <div class="insight-body">Kin+Kind, Peppertree, and Lumino Inc. all had explicitly negative calls with clients questioning strategy, ROI, and AGL's responsiveness. Immediate recovery plans are needed for these three accounts.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">⭐</div>
+      <div class="insight-title">Top Performers: Asif & Bradley</div>
+      <div class="insight-body">Both AMs consistently scored 4.3–4.9 across their healthy accounts and maintained strong client relationships. Their call structure and expertise delivery set the bar for the team.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">🚩</div>
+      <div class="insight-title">Internal Calls Counted as Client Calls</div>
+      <div class="insight-body">2 calls (GoBrewing 01-13, Do It Rite 02-03) were logged as client account reviews but no client attended. These inflate the alert count and indicate a scheduling / confirmation SOP gap.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">📈</div>
+      <div class="insight-title">TikTok Shop Operations Healthy</div>
+      <div class="insight-body">Gabrielle's Batchwell calls scored consistently high (4.43+). Client sentiment is positive and the TikTok Shop launch is on track. Early-stage KPIs should be formally defined for the next review period.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">⚖️</div>
+      <div class="insight-title">Compliance Risk Flagged in 3 Calls</div>
+      <div class="insight-body">DNA Sellers (review incentives), Thrival (competitor keyword targeting during legal settlement), and Flintts Mints (non-compliant labeling) all had compliance risk noted in evaluations.</div>
+    </div>
+  </div>
+
+  <!-- AM PERFORMANCE -->
+  <div class="section-label">Account Manager Performance</div>
+  <div class="am-grid">
+
+    <div class="am-card">
+      <div class="am-header">
+        <div>
+          <div class="am-name">Asif Nazir Sindhu</div>
+          <div class="am-count">25 calls evaluated</div>
+        </div>
+        <div class="am-score-badge">
+          <span class="score-num">4.38</span>
+          <span class="score-label">avg score</span>
+        </div>
+      </div>
+      <div class="dim-bars">
+        <div class="dim-row"><span class="dim-name">Clarity</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:84%"></div></div><span class="dim-val">4.2</span></div>
+        <div class="dim-row"><span class="dim-name">Flow</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:82%"></div></div><span class="dim-val">4.1</span></div>
+        <div class="dim-row"><span class="dim-name">Listening</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:98%"></div></div><span class="dim-val">4.9</span></div>
+        <div class="dim-row"><span class="dim-name">Expertise</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:96%"></div></div><span class="dim-val">4.8</span></div>
+        <div class="dim-row"><span class="dim-name">Expectations</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:80%"></div></div><span class="dim-val">4.0</span></div>
+        <div class="dim-row"><span class="dim-name">Relationship</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:100%"></div></div><span class="dim-val">5.0</span></div>
+        <div class="dim-row"><span class="dim-name">Outcome</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:80%"></div></div><span class="dim-val">4.0</span></div>
+      </div>
+      <div class="am-flags">
+        <span class="flag-pill alert">2 🔴 Alerts</span>
+        <span class="flag-pill watch">1 ⚠️ Watch</span>
+        <span class="flag-pill ok">22 🟢 OK</span>
+      </div>
+    </div>
+
+    <div class="am-card">
+      <div class="am-header">
+        <div>
+          <div class="am-name">Bradley Pierce</div>
+          <div class="am-count">11 calls evaluated</div>
+        </div>
+        <div class="am-score-badge">
+          <span class="score-num">4.13</span>
+          <span class="score-label">avg score</span>
+        </div>
+      </div>
+      <div class="dim-bars">
+        <div class="dim-row"><span class="dim-name">Clarity</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:76%"></div></div><span class="dim-val">3.8</span></div>
+        <div class="dim-row"><span class="dim-name">Flow</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:74%"></div></div><span class="dim-val">3.7</span></div>
+        <div class="dim-row"><span class="dim-name">Listening</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:100%"></div></div><span class="dim-val">5.0</span></div>
+        <div class="dim-row"><span class="dim-name">Expertise</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:88%"></div></div><span class="dim-val">4.4</span></div>
+        <div class="dim-row"><span class="dim-name">Expectations</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:76%"></div></div><span class="dim-val">3.8</span></div>
+        <div class="dim-row"><span class="dim-name">Relationship</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:100%"></div></div><span class="dim-val">5.0</span></div>
+        <div class="dim-row"><span class="dim-name">Outcome</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:76%"></div></div><span class="dim-val">3.8</span></div>
+      </div>
+      <div class="am-flags">
+        <span class="flag-pill alert">1 🔴 Alert</span>
+        <span class="flag-pill watch">1 ⚠️ Watch</span>
+        <span class="flag-pill ok">9 🟢 OK</span>
+      </div>
+    </div>
+
+    <div class="am-card">
+      <div class="am-header">
+        <div>
+          <div class="am-name">Daniel Gonzalez</div>
+          <div class="am-count">13 calls evaluated</div>
+        </div>
+        <div class="am-score-badge">
+          <span class="score-num">3.78</span>
+          <span class="score-label">avg score</span>
+        </div>
+      </div>
+      <div class="dim-bars">
+        <div class="dim-row"><span class="dim-name">Clarity</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:72%"></div></div><span class="dim-val">3.6</span></div>
+        <div class="dim-row"><span class="dim-name">Flow</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:68%"></div></div><span class="dim-val">3.4</span></div>
+        <div class="dim-row"><span class="dim-name">Listening</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:90%"></div></div><span class="dim-val">4.5</span></div>
+        <div class="dim-row"><span class="dim-name">Expertise</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:76%"></div></div><span class="dim-val">3.8</span></div>
+        <div class="dim-row"><span class="dim-name">Expectations</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:62%"></div></div><span class="dim-val">3.1</span></div>
+        <div class="dim-row"><span class="dim-name">Relationship</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:92%"></div></div><span class="dim-val">4.6</span></div>
+        <div class="dim-row"><span class="dim-name">Outcome</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:64%"></div></div><span class="dim-val">3.2</span></div>
+      </div>
+      <div class="am-flags">
+        <span class="flag-pill alert">4 🔴 Alerts</span>
+        <span class="flag-pill ok">9 🟢 OK</span>
+      </div>
+    </div>
+
+    <div class="am-card">
+      <div class="am-header">
+        <div>
+          <div class="am-name">Aeris Del Mar</div>
+          <div class="am-count">6 calls evaluated</div>
+        </div>
+        <div class="am-score-badge">
+          <span class="score-num">3.97</span>
+          <span class="score-label">avg score</span>
+        </div>
+      </div>
+      <div class="dim-bars">
+        <div class="dim-row"><span class="dim-name">Clarity</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:72%"></div></div><span class="dim-val">3.6</span></div>
+        <div class="dim-row"><span class="dim-name">Flow</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:74%"></div></div><span class="dim-val">3.7</span></div>
+        <div class="dim-row"><span class="dim-name">Listening</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:88%"></div></div><span class="dim-val">4.4</span></div>
+        <div class="dim-row"><span class="dim-name">Expertise</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:84%"></div></div><span class="dim-val">4.2</span></div>
+        <div class="dim-row"><span class="dim-name">Expectations</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:78%"></div></div><span class="dim-val">3.9</span></div>
+        <div class="dim-row"><span class="dim-name">Relationship</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:96%"></div></div><span class="dim-val">4.8</span></div>
+        <div class="dim-row"><span class="dim-name">Outcome</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:76%"></div></div><span class="dim-val">3.8</span></div>
+      </div>
+      <div class="am-flags">
+        <span class="flag-pill watch">1 ⚠️ Watch</span>
+        <span class="flag-pill ok">5 🟢 OK</span>
+      </div>
+    </div>
+
+    <div class="am-card">
+      <div class="am-header">
+        <div>
+          <div class="am-name">Gabrielle Aboudi</div>
+          <div class="am-count">4 calls evaluated</div>
+        </div>
+        <div class="am-score-badge">
+          <span class="score-num">4.33</span>
+          <span class="score-label">avg score</span>
+        </div>
+      </div>
+      <div class="dim-bars">
+        <div class="dim-row"><span class="dim-name">Clarity</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:86%"></div></div><span class="dim-val">4.5</span></div>
+        <div class="dim-row"><span class="dim-name">Flow</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:80%"></div></div><span class="dim-val">4.0</span></div>
+        <div class="dim-row"><span class="dim-name">Listening</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:100%"></div></div><span class="dim-val">5.0</span></div>
+        <div class="dim-row"><span class="dim-name">Expertise</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:88%"></div></div><span class="dim-val">4.4</span></div>
+        <div class="dim-row"><span class="dim-name">Expectations</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:80%"></div></div><span class="dim-val">4.0</span></div>
+        <div class="dim-row"><span class="dim-name">Relationship</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:96%"></div></div><span class="dim-val">4.8</span></div>
+        <div class="dim-row"><span class="dim-name">Outcome</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:70%"></div></div><span class="dim-val">3.5</span></div>
+      </div>
+      <div class="am-flags">
+        <span class="flag-pill ok">4 🟢 OK</span>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- AM SCORE TRENDS -->
+  <div class="section-label">Account Manager Score Trends Over Time</div>
+  <div class="am-trend-wrap">
+    <div class="am-trend-tabs" id="amTabs"></div>
+    <div class="am-trend-chart-box">
+      <canvas id="amTrendCanvas"></canvas>
+    </div>
+    <div class="am-radar-row" id="amRadarRow"></div>
+  </div>
+
+  <!-- DIMENSION TRENDS -->
+  <div class="section-label">Team-Wide Dimension Averages</div>
+  <div class="trends-grid">
+    <div class="trend-card">
+      <div class="trend-title">Avg Score by Dimension</div>
+      <div class="trend-bars">
+        <div class="trend-row">
+          <span class="trend-name">Listening</span>
+          <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:95%;background:var(--green)"></div></div>
+          <span class="trend-val">4.75</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-name">Relationship</span>
+          <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:94%;background:var(--green)"></div></div>
+          <span class="trend-val">4.70</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-name">Expertise</span>
+          <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:88%;background:var(--accent)"></div></div>
+          <span class="trend-val">4.40</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-name">Clarity</span>
+          <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:78%;background:var(--accent)"></div></div>
+          <span class="trend-val">3.90</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-name">Outcome</span>
+          <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:76%;background:var(--accent)"></div></div>
+          <span class="trend-val">3.80</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-name">Flow</span>
+          <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:74%;background:var(--amber)"></div></div>
+          <span class="trend-val">3.70</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-name">Expectations</span>
+          <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:70%;background:var(--amber)"></div></div>
+          <span class="trend-val">3.50</span>
+        </div>
+      </div>
+    </div>
+    <div class="trend-card">
+      <div class="trend-title">Calls by Account Manager</div>
+      <div class="trend-bars">
+        <div class="trend-row">
+          <span class="trend-name">Asif Nazir Sindhu</span>
+          <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:100%;background:var(--blue)"></div></div>
+          <span class="trend-val">25</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-name">Daniel Gonzalez</span>
+          <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:52%;background:var(--blue)"></div></div>
+          <span class="trend-val">13</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-name">Bradley Pierce</span>
+          <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:44%;background:var(--blue)"></div></div>
+          <span class="trend-val">11</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-name">Aeris Del Mar</span>
+          <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:24%;background:var(--blue)"></div></div>
+          <span class="trend-val">6</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-name">Gabrielle Aboudi</span>
+          <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:16%;background:var(--blue)"></div></div>
+          <span class="trend-val">4</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-name">Martin / Nik</span>
+          <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:12%;background:var(--muted)"></div></div>
+          <span class="trend-val">3</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERTS -->
+  <div class="section-label">Alerts & Watchlist — Accounts Requiring Action</div>
+  <div class="alerts-list">
+
+    <div class="alert-row sev-alert">
+      <div class="alert-icon">🔴</div>
+      <div class="alert-body">
+        <div class="alert-client">Peppertree <span style="font-weight:300;color:var(--muted)">· 2 alert calls</span></div>
+        <div class="alert-am">Asif Nazir Sindhu</div>
+        <div class="alert-summary">Client explicitly frustrated with vagueness; stated "I can't work with people like that." Original projections were described as "planets apart." Trust is at risk. Needs a scenario-based recovery plan immediately.</div>
+        <div class="alert-flags-mini">
+          <div class="flag-item">Client explicitly demands concrete projections and timelines — none delivered on either call</div>
+          <div class="flag-item">Expectation management scored 1/5 on Feb 20 alert call</div>
+        </div>
+      </div>
+      <div class="alert-meta">
+        <span class="alert-score">2.29</span>
+        <span class="alert-date">Feb 20, 2026</span>
+        <span class="alert-date" style="color:var(--red)">CHURN RISK</span>
+      </div>
+    </div>
+
+    <div class="alert-row sev-alert">
+      <div class="alert-icon">🔴</div>
+      <div class="alert-body">
+        <div class="alert-client">Kin+Kind</div>
+        <div class="alert-am">Aeris Del Mar</div>
+        <div class="alert-summary">Client stated "I don't feel like I have a concrete strategy to move forward." Three months in with no documented keyword strategy. The initial call scored 2.57. Aeris's follow-up call was stronger but relationship recovery is ongoing.</div>
+        <div class="alert-flags-mini">
+          <div class="flag-item">No documented keyword or ranking strategy delivered after 3 months</div>
+          <div class="flag-item">Sales pitch vs execution gap explicitly called out by client</div>
+        </div>
+      </div>
+      <div class="alert-meta">
+        <span class="alert-score">2.57</span>
+        <span class="alert-date">Jan 06, 2026</span>
+        <span class="alert-date" style="color:var(--red)">CHURN RISK</span>
+      </div>
+    </div>
+
+    <div class="alert-row sev-alert">
+      <div class="alert-icon">🔴</div>
+      <div class="alert-body">
+        <div class="alert-client">Lumino Inc</div>
+        <div class="alert-am">Asif Nazir Sindhu</div>
+        <div class="alert-summary">Sales down ~40% YoY with ACoS above target. Client flagged this "for a couple of months" without resolution. Demanded daily updates on campaign fixes. No time-bound recovery plan was agreed on-call.</div>
+        <div class="alert-flags-mini">
+          <div class="flag-item">40% YoY sales decline flagged by client as long-standing issue</div>
+          <div class="flag-item">No concrete recovery plan or reporting cadence established</div>
+        </div>
+      </div>
+      <div class="alert-meta">
+        <span class="alert-score">3.00</span>
+        <span class="alert-date">Jan 07, 2026</span>
+        <span class="alert-date" style="color:var(--red)">CRITICAL</span>
+      </div>
+    </div>
+
+    <div class="alert-row sev-alert">
+      <div class="alert-icon">🔴</div>
+      <div class="alert-body">
+        <div class="alert-client">Flintts Mints</div>
+        <div class="alert-am">Asif Nazir Sindhu</div>
+        <div class="alert-summary">Client questions whether ad spend is "wasting my money." No TACoS target, test plan, or success metrics agreed. Client is pushing for structured testing and segmented reporting. Trust risk escalating.</div>
+        <div class="alert-flags-mini">
+          <div class="flag-item">No agreed TACoS target, test duration, or KPIs for non-brand growth</div>
+          <div class="flag-item">Client attributes sales gains to Meta, not Amazon — attribution not resolved</div>
+        </div>
+      </div>
+      <div class="alert-meta">
+        <span class="alert-score">3.00</span>
+        <span class="alert-date">Mar 06, 2026</span>
+        <span class="alert-date" style="color:var(--amber)">MONITOR</span>
+      </div>
+    </div>
+
+    <div class="alert-row sev-alert">
+      <div class="alert-icon">🔴</div>
+      <div class="alert-body">
+        <div class="alert-client">GoBrewing (No-show) + Do It Rite (No-show)</div>
+        <div class="alert-am">Daniel Gonzalez</div>
+        <div class="alert-summary">Two separate calls where key client stakeholders did not attend. Both calls became internal chat sessions. No structured agenda reset. No formal reschedule confirmation. SOP gap for client confirmation and call-start process.</div>
+        <div class="alert-flags-mini">
+          <div class="flag-item">No client attendance confirmation SOP in place</div>
+          <div class="flag-item">Scored 2.14 (GoBrewing) — lowest score in dataset</div>
+        </div>
+      </div>
+      <div class="alert-meta">
+        <span class="alert-score">2.14</span>
+        <span class="alert-date">Jan 13 / Feb 03</span>
+        <span class="alert-date" style="color:var(--amber)">SOP FIX</span>
+      </div>
+    </div>
+
+    <div class="alert-row sev-watch">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-body">
+        <div class="alert-client">NCI</div>
+        <div class="alert-am">Bradley Pierce</div>
+        <div class="alert-summary">One-week delay on virtual bundle access caused by internal Ops miscommunication discovered live on the call. Client was frustrated. Root cause visible to client in real time.</div>
+        <div class="alert-flags-mini">
+          <div class="flag-item">Internal Ops → AM communication gap on permissions/access</div>
+          <div class="flag-item">No pre-call access verification step in SOP</div>
+        </div>
+      </div>
+      <div class="alert-meta">
+        <span class="alert-score">3.43</span>
+        <span class="alert-date">Jan 09, 2026</span>
+        <span class="alert-date" style="color:var(--amber)">SOP FIX</span>
+      </div>
+    </div>
+
+    <div class="alert-row sev-watch">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-body">
+        <div class="alert-client">TFT (The Forged T)</div>
+        <div class="alert-am">Bradley Pierce</div>
+        <div class="alert-summary">Client has had inventory in FBA 2–3 weeks with zero sales. Urgency for first sale within 24-48 hours. Stranded inventory, missing safety docs, and inventory forecasting all open without clear owners.</div>
+        <div class="alert-flags-mini">
+          <div class="flag-item">Launch anxiety — no structured launch readiness checklist applied</div>
+          <div class="flag-item">Multiple critical follow-ups without owners or ETAs</div>
+        </div>
+      </div>
+      <div class="alert-meta">
+        <span class="alert-score">3.86</span>
+        <span class="alert-date">Jan 12, 2026</span>
+        <span class="alert-date" style="color:var(--amber)">WATCH</span>
+      </div>
+    </div>
+
+    <div class="alert-row sev-watch">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-body">
+        <div class="alert-client">Home So (Mar 09)</div>
+        <div class="alert-am">Aeris Del Mar</div>
+        <div class="alert-summary">Expected participant did not join. Meeting drifted into personal conversation. No clear business outcomes achieved. PPC questions raised but not resolved with concrete next steps.</div>
+        <div class="alert-flags-mini">
+          <div class="flag-item">Meeting not reframed when expected participant absent</div>
+          <div class="flag-item">No confirmation of long-tail campaign ownership or timing</div>
+        </div>
+      </div>
+      <div class="alert-meta">
+        <span class="alert-score">2.71</span>
+        <span class="alert-date">Mar 09, 2026</span>
+        <span class="alert-date" style="color:var(--amber)">WATCH</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CALL LOG TABLE -->
+  <div class="section-label">Full Call Log</div>
+  <div class="table-wrap">
+    <div class="table-toolbar">
+      <input type="text" class="search-box" placeholder="Search client, AM, or keyword…" id="searchInput" oninput="filterTable()">
+      <div class="filter-group">
+        <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+        <button class="filter-btn" onclick="setFilter('alert',this)">🔴 Alert</button>
+        <button class="filter-btn" onclick="setFilter('watch',this)">⚠️ Watch</button>
+        <button class="filter-btn" onclick="setFilter('ok',this)">🟢 OK</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+    <table id="callTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Client</th>
+          <th>AM</th>
+          <th>Status</th>
+          <th>Score</th>
+          <th>Sentiment</th>
+          <th>Key Quote</th>
+        </tr>
+      </thead>
+      <tbody id="callBody">
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modalContent">
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">✕ Close</button>
+    <div id="modalInner"></div>
+  </div>
+</div>
+
+<footer>
+  Amazon Growth Lab · QA Call Intelligence Report · Generated March 2026 · Data: Dec 2025 – Mar 2026 · 66 calls evaluated
+</footer>
+
+<script>
+const calls = [
+  {date:"12-19-2025",client:"Christopher Radko",am:"Daniel Gonzalez",sev:"ok",score:4.43,sentiment:"Positive",quote:"I think it's going awesome. So thank you guys again.",redFlags:["No red flags detected"],gap:"Slight ambiguity on exact timing/owner for removing account health violations after ASIN deletion",summary:"Strong, collaborative call with clear progress on discount enrollment, account health violations, and Q4 performance.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/511918916"},
+  {date:"01-02-2026",client:"Christopher Radko",am:"Daniel Gonzalez",sev:"ok",score:4.43,sentiment:"Positive",quote:"It's been awesome and you're doing a great job... everyone's on the same page now.",redFlags:["Warehouse shipped wrong products and had high breakage (client-owned)"],gap:"Ownership and timing on FBM/FBA payment discrepancy analysis could be sharper",summary:"Highly collaborative, strategic call combining tactical problem-solving with thoughtful year-end review themes. Very strong relationship.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/519890880"},
+  {date:"01-05-2026",client:"Thrival",am:"Asif Nazir Sindhu",sev:"ok",score:4.29,sentiment:"Positive",quote:"Our Amazon's humming right now… our account's going pretty quickly.",redFlags:["Potential legal/brand risk around targeting SoRite keywords during settlement"],gap:"No explicit recap of all agreed changes with owners and timelines",summary:"Strong, collaborative call with warm conversational tone. Asif listened closely and validated strategy.",dims:[4,4,5,4,4,5,4],url:"https://fathom.video/calls/520015324"},
+  {date:"01-05-2026",client:"Snow",am:"Bradley Pierce",sev:"ok",score:4.43,sentiment:"Positive",quote:"We are officially partners… we are teammates.",redFlags:["Minor delay on refreshing Brand Tailored Promotions due to holidays"],gap:"New vs returning customer and subscription benchmarks: no explicit recap of owner/date",summary:"Strong, collaborative call focused on PPC mix, new-to-brand vs retargeting strategy, and Subscribe & Save growth.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/520607430"},
+  {date:"01-05-2026",client:"DNA Sellers",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"Let's turn on the campaigns which have profitability and figure out today what to do next.",redFlags:["Multiple suggestions around review incentives that are high risk for Amazon TOS"],gap:"No explicit recap of concrete per-ASIN budgets and profitability targets",summary:"Strong on education and strategy. Compliance risk on review tactics needs to be addressed.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/522392893"},
+  {date:"01-06-2026",client:"Kin+Kind",am:"Aeris Del Mar",sev:"alert",score:2.57,sentiment:"Negative",quote:"I don't feel like I have a concrete strategy to move forward... it feels a lot like we're moving in a downward spiral.",redFlags:["Client explicitly states concern about lack of strategy after 3 months","No keyword target list or dynamic profitability model shared"],gap:"Missing artifacts like keyword target list and dynamic profitability model",summary:"Significant client dissatisfaction. Relationship at risk. Immediate follow-up with a structured strategy deck is critical.",dims:[3,3,3,3,1,2,3],url:"https://fathom.video/calls/522732895"},
+  {date:"01-06-2026",client:"FMTV",am:"Bradley Pierce",sev:"ok",score:4.43,sentiment:"Positive",quote:"If Amazon's not going to provide the data, we're going to figure out how to make the data ourselves, guys.",redFlags:["Some uncertainty around Brand Tailored Promotions audience measurement"],gap:"BTP mechanics open questions deferred without documented follow-up plan",summary:"Highly collaborative call with deep strategic discussion on PPC efficiency and BTP. Client trusts AGL.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/523907383"},
+  {date:"01-07-2026",client:"Lumino Inc",am:"Asif Nazir Sindhu",sev:"alert",score:3.00,sentiment:"Negative",quote:"What I need is I need to fix this yesterday... I need a daily update on when we're going to fix our campaigns.",redFlags:["Sales down ~40% YoY with ACoS above target — flagged for months without resolution","No time-bound action plan or reporting cadence agreed"],gap:"No concrete, time-bound recovery plan — serious expectation management failure",summary:"Serious performance issue. Client feels urgency not addressed. AM must lead with ownership and close with dated action plan.",dims:[3,3,4,3,2,4,2],url:"https://fathom.video/calls/524046412"},
+  {date:"01-07-2026",client:"Brooklinen",am:"Bradley Pierce",sev:"ok",score:4.29,sentiment:"Positive",quote:"Beating budget is definitely a success… so yeah, all good things.",redFlags:["Light confusion around files/budget sheet — AM apologized and seemed disorganized"],gap:"No proactive documentation of promo calendar",summary:"Strong call with positive rapport. Clear trust from Brooklinen. Minor prep issues.",dims:[4,4,5,4,4,5,4],url:"https://fathom.video/calls/523238229"},
+  {date:"01-07-2026",client:"Thrival",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"I think we got an answer… I look forward to seeing that updated spreadsheet.",redFlags:["No red flags detected"],gap:"Next step to rerun data and share updated sheet — no explicit deadline set",summary:"Asif clearly walked client through SoRight keyword data. Strong expertise and collaborative tone.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/524226253"},
+  {date:"01-07-2026",client:"GoBrewing",am:"Daniel Gonzalez",sev:"ok",score:4.29,sentiment:"Positive",quote:"I'm not a stranger to Slack and you all reply awesome… we appreciate you.",redFlags:["Client has strong anxiety about past mass deactivations"],gap:"No explicit timeline for when appeal/letter will be submitted",summary:"Focused, empathetic, well-handled call around a sensitive account health issue.",dims:[4,4,5,4,4,5,4],url:"https://fathom.video/calls/524193873"},
+  {date:"01-07-2026",client:"July",am:"Asif Nazir Sindhu",sev:"ok",score:4.29,sentiment:"Positive",quote:"No, that's good. As long as we could maybe start to look at that monthly.",redFlags:["No red flags detected"],gap:"Monthly category report cadence not explicitly summarized",summary:"Strong, well-structured call with clear progress updates. Asif used SmartScout data effectively.",dims:[4,4,4,5,4,5,4],url:"https://fathom.video/calls/524126251"},
+  {date:"01-09-2026",client:"NCI",am:"Bradley Pierce",sev:"alert",score:3.43,sentiment:"Neutral",quote:"The sense of urgency needs to be heard... it's been a week.",redFlags:["One-week delay on virtual bundle access from internal Ops miscommunication","No firm owner assigned for resolving ads-block issue"],gap:"No pre-call access/permissions verification step in SOP",summary:"Messy situation handled with good empathy. Internal Ops miscommunication exposed live. Pre-call SOP fix needed urgently.",dims:[3,3,4,3,3,4,4],url:"https://fathom.video/calls/526842864"},
+  {date:"01-12-2026",client:"TFT",am:"Bradley Pierce",sev:"watch",score:3.86,sentiment:"Neutral-to-Positive",quote:"In the next 24 to 48 hours, I would like to be able to send the link to someone... and have a first sale.",redFlags:["Client has had inventory in FBA for 2–3 weeks with no sales","Multiple critical issues without explicit owners or ETAs"],gap:"No structured agenda or explicit owner/timeline on stranded inventory or first-sale",summary:"Strong rapport but loosely structured. Launch-phase urgency not adequately managed with clear ownership.",dims:[4,3,5,4,3,5,3],url:"https://fathom.video/calls/528195311"},
+  {date:"01-12-2026",client:"MoreYellow",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"It sounds to me like the most important critical thing I need to do is get this UPC code printed immediately.",redFlags:["No red flags detected"],gap:"Action items referenced for Slack without owners/timelines clearly summarized live",summary:"Highly collaborative, tactical call. Asif demonstrated strong Amazon expertise.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/530176341"},
+  {date:"01-13-2026",client:"GoBrewing (no-show)",am:"Daniel Gonzalez",sev:"alert",score:2.14,sentiment:"Neutral",quote:"Maybe we need to reschedule. Let's wait five more minutes and if he does not join, I'll reschedule.",redFlags:["No client representative attended — entire call was internal chatter","No structured backup agenda when client was absent"],gap:"No client attendance confirmation SOP",summary:"Call did not achieve purpose. Became an internal chat. Scheduling confirmation SOP needs immediate fix.",dims:[3,1,3,2,1,4,1],url:"https://fathom.video/calls/529186199"},
+  {date:"01-13-2026",client:"Posterity Health",am:"Daniel Gonzalez",sev:"ok",score:4.00,sentiment:"Positive",quote:"Let's spend 2,500 for the rest of this month and let's just get back together and talk about the results.",redFlags:["Early confusion from leadership about not finding product on Amazon"],gap:"No explicit recap of next steps, owners, or success definition for PPC test",summary:"Team resolved payment issue and provided thorough PPC education. Client agreed to $2,500 budget test.",dims:[4,4,4,4,4,4,4],url:"https://fathom.video/calls/529186203"},
+  {date:"01-16-2026",client:"Mavi",am:"Bradley Pierce",sev:"ok",score:4.43,sentiment:"Positive",quote:"That was a really, really big win.",redFlags:["Client comments on December SEO were missed — left inside Excel, not surfaced to team"],gap:"No SOP to capture client feedback from document comments",summary:"Strong call. Main risk is operational — missed SEO feedback due to process gap. Bradley owned it well.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/534132113"},
+  {date:"01-16-2026",client:"Strauss Naturals",am:"Aeris Del Mar",sev:"ok",score:4.29,sentiment:"Positive",quote:"No, no, that sounds good to us.",redFlags:["No red flags detected"],gap:"Next steps implied but not summarized with single clear recap of owners and timelines",summary:"Effective, data-driven call around increasing ad spend with controlled TACoS. Client aligned and trusting.",dims:[4,4,4,5,4,5,4],url:"https://fathom.video/calls/534302958"},
+  {date:"01-20-2026",client:"GoBrewing",am:"Daniel Gonzalez",sev:"ok",score:4.43,sentiment:"Positive",quote:"Can we not be vendor central, and can we take Bureau off the number one spot?",redFlags:["No red flags detected"],gap:"Loss-leader SKU strategy agreed conceptually but not summarized with owners and dates",summary:"Strong, strategic call. Deep expertise on Vendor Central and competitive positioning. Excellent rapport.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/536973737"},
+  {date:"01-20-2026",client:"Thrival",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"That's better than we've ever done in January, by a wide margin.",redFlags:["No red flags detected"],gap:"Walmart review export relies on Matt with no explicit deadline or confirmation recap",summary:"Very positive sentiment. Record performance. Client trusts AGL's strategy completely.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/534629581"},
+  {date:"01-20-2026",client:"Modaura",am:"Daniel Gonzalez",sev:"ok",score:4.43,sentiment:"Positive",quote:"Whatever we need to do, let's just do it.",redFlags:["Category sabotage and hijackers have materially hurt sales (external risk)"],gap:"Transparency enrollment DRI and deadline not clearly documented",summary:"High-stakes call. Daniel showed clear ownership and empathy. Client trusts team and aligned on aggressive actions.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/536973723"},
+  {date:"01-20-2026",client:"PureWay Compliance",am:"Daniel Gonzalez",sev:"ok",score:3.00,sentiment:"Neutral",quote:"I think if we launch the new products, we can go much beyond that.",redFlags:["Key client stakeholders did not join — call effectively stalled"],gap:"No formal reschedule confirmation or new time agreed",summary:"Strong rapport but business objectives not advanced. Key decision-makers absent. Discussion drifted personal.",dims:[3,2,4,3,2,5,2],url:"https://fathom.video/calls/536973727"},
+  {date:"01-21-2026",client:"Brooklinen",am:"Bradley Pierce",sev:"ok",score:4.29,sentiment:"Positive",quote:"I'm open to literally anything under the sun to hit a revenue target.",redFlags:["Client materially under monthly ad budget (~$68–70K) and revenue targets"],gap:"No explicit owner/timeline for DSP budget reallocation or comforter parentage fix",summary:"Collaborative, solution-oriented. Client open to testing. Team positioned DSP as lever effectively.",dims:[4,4,5,4,4,5,4],url:"https://fathom.video/calls/538961264"},
+  {date:"01-21-2026",client:"July",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"Looking forward to a great year with new initiatives. I believe there's room for a lot of growth.",redFlags:["No red flags detected"],gap:"DSP reporting cadence and KPI framework not clearly defined",summary:"Strong, proactive call with strategic discussion on growth levers. Client highly engaged.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/539509188"},
+  {date:"01-27-2026",client:"PureWay Compliance",am:"Daniel Gonzalez",sev:"ok",score:4.43,sentiment:"Positive",quote:"Let's try it for one month and keep an eye on it then. Let's try 5k more in February.",redFlags:["No red flags detected"],gap:"Tasks mentioned verbally but owners/timelines not clearly restated to client",summary:"Strong, data-driven call. Clear wins highlighted. Client agreed to +$5k PPC test in February.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/545215146"},
+  {date:"01-28-2026",client:"AquaTeak",am:"Asif Nazir Sindhu",sev:"ok",score:4.86,sentiment:"Positive",quote:"That's fantastic… Looking forward to seeing what the team can do.",redFlags:["No red flags detected"],gap:"Minor: StoreAutomator deactivation ownership not explicitly confirmed",summary:"Strong, high-value call. Asif confidently led agenda, resolved access issue live, and moved into strategy. Deep expertise displayed.",dims:[5,5,5,5,4,5,5],url:"https://fathom.video/calls/545737765"},
+  {date:"02-02-2026",client:"Thrival",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"That's good news. That's really good news.",redFlags:["Amazon warning that black bullseye ASIN is at risk of suspension due to negative reviews"],gap:"No explicit owner/timeline for addressing the Amazon ASIN warning",summary:"Collaborative and strategy-focused. Key risks surfaced but mitigation ownership not locked in.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/550578807"},
+  {date:"02-03-2026",client:"Do it Rite (no-show)",am:"Daniel Gonzalez",sev:"alert",score:3.00,sentiment:"Neutral",quote:"We already have a plan, so we can just start new listing and they can make a shipment for them.",redFlags:["Core client stakeholders did not attend — meeting became internal working session","No structured agenda or reset"],gap:"No client-communicated action plan or follow-up meeting defined",summary:"Call ended up as internal coordination with Pavel. Primary client contacts absent. Missing structure and formal recap.",dims:[3,2,4,3,2,4,3],url:"https://fathom.video/calls/546797494"},
+  {date:"02-04-2026",client:"AquaTeak",am:"Asif Nazir Sindhu",sev:"ok",score:4.71,sentiment:"Positive",quote:"If we can make the customer experience simple... I think it's a win in a lot of ways.",redFlags:["No red flags detected"],gap:"Next steps agreed in principle but no explicit owner-by-date recap at end",summary:"Strong, high-value strategy and execution call. Deep expertise displayed. Client engaged and excited.",dims:[5,5,5,5,4,5,4],url:"https://fathom.video/calls/553856712"},
+  {date:"02-04-2026",client:"July",am:"Asif Nazir Sindhu",sev:"ok",score:4.29,sentiment:"Positive",quote:"Great to see it up as well and net profit increasing.",redFlags:["No red flags detected"],gap:"Follow-ups deferred to Slack without explicit owners/timelines on call",summary:"Focused, upbeat call. Strong relationship. Asif proactively suggested Vine, Creator Connections tactics.",dims:[4,4,5,4,4,5,4],url:"https://fathom.video/calls/555421832"},
+  {date:"02-05-2026",client:"Christopher R",am:"Daniel Gonzalez",sev:"ok",score:4.43,sentiment:"Positive",quote:"This is everything we needed, I think.",redFlags:["No red flags detected"],gap:"ShipStation/Cavallo integration follow-up timing/channel could be clearer",summary:"Strong, collaborative call on CS workflows and FBM order handling. Client expressed high appreciation.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/556952456"},
+  {date:"02-09-2026",client:"Peppertree",am:"Asif Nazir Sindhu",sev:"ok",score:4.14,sentiment:"Positive",quote:"It sounds like there's a plan and there's a method to it… Settle the nerves a little bit.",redFlags:["Client anxious about early losses in saturated category"],gap:"Original forecast vs current reality not fully reconciled; no explicit reset of month-one P&L expectations",summary:"Strong job calming nervous client. Explained Amazon fundamentals clearly. Stopped short of directional loss range.",dims:[4,4,5,4,3,5,4],url:"https://fathom.video/calls/562053073"},
+  {date:"02-11-2026",client:"AquaTeak",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"I already see a lot of it's already been corrected. Very, very good. That's great to know.",redFlags:["Misalignment on timeline for optimizing all ~30 CHI variations within two months"],gap:"Timeline for all CHI variations still vague; no concrete date given",summary:"Strong, high-value call. Multiple strategic initiatives explained in depth. Prior commitment on variation pace needs explicit follow-up.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/562053084"},
+  {date:"02-17-2026",client:"Thrival",am:"Asif Nazir Sindhu",sev:"ok",score:4.29,sentiment:"Positive",quote:"Our website's humming today, so it leads me to believe that people are seeing it.",redFlags:["Potential compliance risk if 'SO' trademark guidance is misinterpreted"],gap:"No explicit owner or deadline for creating full negative keyword list for 'SO' terms",summary:"Collaborative and solution-focused. Client engaged and optimistic. Trademark keyword constraint handling needs documentation.",dims:[4,4,5,4,4,5,4],url:"https://fathom.video/calls/566824106"},
+  {date:"02-17-2026",client:"Mineral Moon",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"I'm looking forward to jumping in today… I think it's worth exploring.",redFlags:["Client concerned about stagnation at ~$20K/month and drop in Redemy sales"],gap:"No clear owner on when Asif will send attribution links and ranking plan",summary:"Strong, consultative call. Clearly diagnosed plateau and tied to Amazon mechanics. Concrete levers proposed.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/569848068"},
+  {date:"02-18-2026",client:"AquaTeak",am:"Asif Nazir Sindhu",sev:"ok",score:4.29,sentiment:"Positive",quote:"We're very happy with what you're doing... it's really more about the pay schedule and what we paid for.",redFlags:["Client raised concern they 'paid for the speed, but we're not getting it' — 5 ASINs/month not delivered"],gap:"Original scope/timeline not proactively revisited when delays emerged — client had to raise it",summary:"Strong strategy and relationship call. Main risk is commercial: AquaTeak feels behind on paid scope. Written delivery schedule needed.",dims:[4,4,5,5,3,5,4],url:"https://fathom.video/calls/569848067"},
+  {date:"02-18-2026",client:"July",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"I'm happy to extend the budget, that's fine.",redFlags:["No red flags detected"],gap:"UK setup timing and Amazon UK onboarding cadence not pinned down explicitly",summary:"Strong collaborative call. UK expansion, KSAFE progress, and US performance all covered. Client very responsive.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/571414394"},
+  {date:"02-20-2026",client:"Peppertree",am:"Asif Nazir Sindhu",sev:"alert",score:2.29,sentiment:"Negative",quote:"Please stop being so vague because I need someone that goes like, this is how long it's going to take.",redFlags:["Client explicitly frustrated with vagueness — 'I can't work with people like that'","Expectation-setting on launch economics and ACoS trajectory not clearly framed upfront"],gap:"Client asked for concrete projections multiple times — received only current-state analytics",summary:"Call broke down on expectation management. Client signals potential churn. Structured scenario-based forecast urgently needed.",dims:[2,2,3,3,1,2,3],url:"https://fathom.video/calls/572499994"},
+  {date:"02-27-2026",client:"Painting4Real",am:"Asad Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"We really appreciate your help with this… it's not going to be as hard as I think.",redFlags:["Ongoing Amazon compliance pressure (SDS, kids-related flags) could create listing risk"],gap:"No explicit recap of who owns each follow-up item with due dates",summary:"Highly collaborative and detailed. Strong strategic guidance on pricing, FBM setup, and kids-safety/compliance.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/582880361"},
+  {date:"02-27-2026",client:"Burlap Fabrics",am:"Asad Nazir Sindhu",sev:"ok",score:4.14,sentiment:"Positive",quote:"One week from now, okay.",redFlags:["Client said previous Amazon plan of action 'wasn't professional enough' and they had to redo it"],gap:"No clear owner for reviewing client's successful POA template and updating AGL's internal SOP",summary:"Collaborative and warm. Strong alignment on using DTC site as source of truth for Walmart listings.",dims:[4,4,4,4,4,5,4],url:"https://fathom.video/calls/582959555"},
+  {date:"03-02-2026",client:"Thrival",am:"Asif Nazir Sindhu",sev:"ok",score:4.00,sentiment:"Positive",quote:"We're excited to see how this strategy plays out over the next few weeks.",redFlags:["No red flags detected"],gap:"Some follow-up actions lack explicit owners and timelines",summary:"Well-run call with clear communication. AM demonstrated solid expertise. Success metrics not fully locked in.",dims:[4,4,4,4,4,4,4],url:"https://fathom.video/calls/582703047"},
+  {date:"03-04-2026",client:"Aqua Teak",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"Overall, I was very pleased when I finished running the numbers yesterday... lots of really good stuff.",redFlags:["Minor confusion around clawback/reimbursement ownership"],gap:"Unclear SOP on when AGL starts clawback service and what contract is required",summary:"Strong collaborative call with very positive sentiment around performance and mix shift. Relationship very healthy.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/586499621"},
+  {date:"03-04-2026",client:"Eshades",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"Put it this way, all $72 million of business goes to your company.",redFlags:["No red flags detected"],gap:"Timeline and scope for extra graphic designer not broken into concrete milestones",summary:"Strong, strategic call with very high trust. Client expressed $70M–$100M partnership potential. AGL committed to funding extra designer.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/calls/589234672"},
+  {date:"03-04-2026",client:"July",am:"Asif Nazir Sindhu",sev:"ok",score:4.57,sentiment:"Positive",quote:"If it's better, it's even better.",redFlags:["No red flags detected"],gap:"DSP content briefs committed to but no explicit owner/timeline stated on call",summary:"Concise, well-run call covering MerchantSpring, UK activation, Spring Sale, and creative updates. Strong command of account.",dims:[5,4,5,5,4,5,4],url:"https://fathom.video/calls/588026892"},
+  {date:"03-05-2026",client:"Loop Family",am:"Asif Nazir Sindhu",sev:"ok",score:4.57,sentiment:"Positive",quote:"I like that strategy... we want to make sure we do this methodically.",redFlags:["Minor: Asif initially referenced historical Amazon performance before client clarified not useful"],gap:"No explicit owner/timeline recap for market-demand/seasonality analysis at end of call",summary:"Strong, strategic call. Clear rapport. Asif demonstrated deep Amazon expertise on seasonality and keyword strategy.",dims:[5,4,5,5,4,5,4],url:"https://fathom.video/calls/588322784"},
+  {date:"03-06-2026",client:"Flintts Mints",am:"Asif Nazir Sindhu",sev:"alert",score:3.00,sentiment:"Neutral",quote:"If you're telling me it grows, to me, you're just wasting my money.",redFlags:["Client explicitly questions whether ad spend is wasting money on branded terms","No agreed TACoS target, test duration, or success metrics for non-brand growth"],gap:"TACoS and branded vs non-branded impact don't fully address client's core attribution concern",summary:"Compliance path for expiration-date violation resolved. But TACoS explanation insufficient. Client demanding structured testing.",dims:[3,3,4,3,2,3,3],url:"https://fathom.video/calls/592300232"},
+  {date:"03-09-2026",client:"Modash.io",am:"Unknown",sev:"ok",score:4.43,sentiment:"Positive",quote:"Thank you so, so much. This was super helpful.",redFlags:["No red flags detected"],gap:"No gaps identified",summary:"Gabrielle clearly articulated AGL's TikTok Shop launch goals. Focused, professional vendor evaluation.",dims:[5,4,5,4,4,5,4],url:"https://fathom.video/share/9ZWD6LsWyXZBA41A3ci5k4HvxyUkYRJH"},
+  {date:"03-09-2026",client:"Home So",am:"Aeris Del Mar",sev:"watch",score:2.71,sentiment:"Neutral",quote:"I have too much things to think I would like to do... and I don't have time for that.",redFlags:["Client's time and focus are being stretched — risk of missed follow-through","No explicit confirmation of next steps on long-tail keyword campaign"],gap:"Meeting not reframed when expected participant absent; drifted into personal conversation",summary:"Friendly tone but lacks structure and clear business outcomes. Client PPC questions not resolved.",dims:[3,2,3,3,2,4,2],url:"https://fathom.video/share/kXW1uxcjSps4RT4EcF4j6_iRyqmP6ZrX"},
+  {date:"03-10-2026",client:"Loop Family",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"This is just really good for all of us to get our brains around this… it's very encouraging.",redFlags:["No red flags detected"],gap:"No explicit owner or due date for Christina sending video assets and pricing guardrails",summary:"Highly consultative, data-driven session. Client impressed. Category size and seasonality reframing very effective.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/share/k9cg54mq_KiRpwK1QF9CE59L-wLPsHpn"},
+  {date:"03-10-2026",client:"Hair Illusion",am:"Martin Zerrudo",sev:"ok",score:4.29,sentiment:"Positive",quote:"I don't have a budget. You can spend a million a month if you can, just as long as the ACoS stays similar.",redFlags:["Minor confusion around exact permission gaps"],gap:"Access issue: missing permissions not itemized; follow-up SOP should include permission checklist",summary:"Strong onboarding/transition call. Clear 30/60/90-day roadmap. Client sentiment positive, high trust and openness.",dims:[4,5,4,4,4,5,4],url:"https://fathom.video/share/4zFKym6ceCU5jUgkHeKQ27DCm-ZBgJiJ"},
+  {date:"03-11-2026",client:"Batchwell",am:"Gabrielle Aboudi",sev:"ok",score:4.43,sentiment:"Positive",quote:"No, I'm excited. Thanks for all the hard work.",redFlags:["No red flags detected"],gap:"No explicit recap of concrete KPIs for TikTok launch",summary:"Strong, upbeat check-in. TikTok influencer onboarding and Shopify connector confirmed live. Client highly positive.",dims:[5,4,5,4,4,5,4],url:"https://fathom.video/share/ZxRKFK1bexMXbXpLdw6z9FPMAaCzSxxS"},
+  {date:"03-11-2026",client:"Aqua Teak",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"I think what you're doing is working and it feels like we've just begun… I think there's a lot more potential.",redFlags:["Inventory constraints at FBA on key top sellers may cause short-term performance dips"],gap:"Prime Big Spring Sale participation not clearly time-bound",summary:"Strong, strategic call. Clients acknowledged higher order values. Relationship health excellent.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/share/12P9mNuLyj2xHR8LaG4a3zLqS8sFAXR8"},
+  {date:"03-12-2026",client:"HOME SO",am:"Aeris Del Mar",sev:"ok",score:4.29,sentiment:"Positive",quote:"Knowing that you guys are actively monitoring and making constant adjustments... I'm still optimistic.",redFlags:["Significant drop in organic sales and sessions vs last year — client 'very disappointed'"],gap:"No explicit PPC budget guardrails — exact March target range not finalized",summary:"Strong, collaborative call. Team handled disappointment with transparency and solid analysis. Client confidence restored.",dims:[4,4,5,4,4,5,4],url:"https://fathom.video/share/TYkbeYydfNMyMyrFY3yK_h6eV6DqymPn"},
+  {date:"03-13-2026",client:"Kin Kind",am:"Aeris Del Mar",sev:"ok",score:4.14,sentiment:"Positive",quote:"If your data is like, no, this kills it for us, go ahead.",redFlags:["Momentary confusion around data access for SEO edits and performance tracking"],gap:"No single clear owner and process for measuring and reporting SEO changes",summary:"High-engagement call. Aeris listened well and adjusted strategy toward more natural long-tail keywords. Good recovery from earlier alert.",dims:[3,4,4,4,4,5,4],url:"https://fathom.video/share/wQ2GKrohZEL7ZgwWxrWfG93UevkPgcJp"},
+  {date:"03-13-2026",client:"GoodsIQ",am:"Martin Zerrudo",sev:"ok",score:4.43,sentiment:"Positive",quote:"Having a partner to kind of take that information and act on that without us reaching out to them would be beneficial.",redFlags:["Client actively planning to leave CommerceIQ — high expectations for AGL"],gap:"No explicit owner or timeline for phased rollout beyond 'we'll recap and schedule devs'",summary:"Strong, strategic call. Clearly advanced relationship. Martin demonstrated deep 1P ops expertise.",dims:[4,4,5,5,4,5,4],url:"https://fathom.video/share/L9_stirSndeQUoyQDBnusf9xL9EaY_Bi"},
+  {date:"03-16-2026",client:"Elevex Labs",am:"Aeris Del Mar",sev:"ok",score:4.29,sentiment:"Positive",quote:"It would also be super helpful to see if you guys can tell us if we're missing anything on the PPC front.",redFlags:["No red flags detected"],gap:"No explicit owner or deadline for Sebastian to confirm strategic growth rep eligibility",summary:"Strong, collaborative call with Amazon. Aeris positioned AGL well as active partner. Client engaged and trusting.",dims:[4,4,5,4,4,5,4],url:"https://fathom.video/share/CC2jKNfjCAjCAhtu-hxCoEhni9HWL74c"},
+  {date:"03-18-2026",client:"Thrival",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"We'll take a crack at this... we'll go through it and then send you a report on which ones we want.",redFlags:["No red flags detected"],gap:"Partial returns program follow-up ownership not confirmed (Asif to resend vs Cam's dad handling)",summary:"Strong collaborative call. Clear rapport and high engagement. Spring sale SKU selection and A+ revisions aligned.",dims:[4,4,5,4,4,5,4],url:"https://fathom.video/share/FaEkNj_-BC_mwb5KzpxrEDLwmtB1qovR"},
+  {date:"03-18-2026",client:"Aqua Teak",am:"Asif Nazir Sindhu",sev:"ok",score:4.14,sentiment:"Positive",quote:"The goal is to get you to really get our top 100 or most of our good products well situated.",redFlags:["Conflicting documentation and verbal expectations on downgraded plan (1 vs 3 creative parent ASINs)","Client stated it would be a 'major problem' if not honored"],gap:"Plan/SOW for downgraded package not in single source of truth",summary:"Effective call with strong rapport. Asif handled scope disagreement calmly. Contract clarification with Ajit needed urgently.",dims:[4,4,5,4,3,5,4],url:"https://fathom.video/share/SfoNja87fSAyztWgXtc2BatNoSo_yi2c"},
+  {date:"03-18-2026",client:"July",am:"Asif Nazir Sindhu",sev:"ok",score:4.57,sentiment:"Positive",quote:"Perfect, that's great.",redFlags:["No red flags detected"],gap:"Slight ambiguity on who is ultimately responsible for enrolling Big Spring packing sales",summary:"Strong, efficient call. Clear decisions on Big Spring sale enrollments. Asif demonstrated strong expertise on deals and fees.",dims:[4,5,5,5,4,5,4],url:"https://fathom.video/share/oNwMyREb_x3FUU1Akzp6AFQRgGSDZhc-"},
+  {date:"03-19-2026",client:"PPC Manager Interview",am:"Nik Bačić",sev:"ok",score:3.43,sentiment:"Neutral",quote:"This is kind of starting to be frustrating on a lot of levels.",redFlags:["Frustration around hiring/onboarding process and scheduling"],gap:"Unclear who owns confirming candidate availability (Diana vs Danielle vs Asif)",summary:"Internal hiring sync. Clear communication but visible frustration with interview process reliability.",dims:[4,3,4,4,3,4,3],url:"https://fathom.video/share/dAZu_dert1yG7R2TzqABpBEsWhAzxxeD"},
+  {date:"03-19-2026",client:"Batchwell",am:"Unknown",sev:"ok",score:4.43,sentiment:"Positive",quote:"I'm not like overly concerned because we just started... it would be awesome to turn more sales through TikTok Shop.",redFlags:["No red flags detected"],gap:"SOP/video for promotions and Slack recap promised — ensure these are tracked and actually sent",summary:"Strong collaborative check-in. Mutual alignment on early-stage TikTok Shop metrics. Pricing levers agreed.",dims:[5,4,5,4,4,5,4],url:"https://fathom.video/share/BcV54fUc6YsL4bSnbPbMcwjHfkWs4urW"},
+  {date:"03-19-2026",client:"ynVISION",am:"Martin Zerrudo",sev:"ok",score:4.57,sentiment:"Positive",quote:"I don't want to dive off the deep end… let's get the ball rolling… I'll be here for full support on my end.",redFlags:["No red flags detected"],gap:"Forecasting: item-level inventory forecast format, cadence, and owner not clearly defined",summary:"Strong onboarding call. Clear introductions, structured deck. Client highly engaged and expressed confidence.",dims:[5,5,5,5,4,5,4],url:"https://fathom.video/share/-2meYaEsDTV9CrExXCy5yGoVbhJMgzpN"},
+  {date:"03-20-2026",client:"Loop Family",am:"Asif Nazir Sindhu",sev:"ok",score:4.43,sentiment:"Positive",quote:"I think gathering this weekly data is going to be super helpful to untangle those two things.",redFlags:["No red flags detected"],gap:"Competitor conversion analysis promised but no explicit owner/timeline restated at end",summary:"Strong collaborative call. Strategic alignment on seasonality and Mother's Day planning. Top-of-funnel gifting campaign approved.",dims:[4,4,5,4,4,5,4],url:"https://fathom.video/share/UR-4sx26RKXnRhQYM5ZCaMm3a2gzwbmR"},
+  {date:"03-24-2026",client:"Sellico",am:"Gabrielle Aboudi",sev:"ok",score:3.86,sentiment:"Positive",quote:"I'm going to watch this over and I'll get back to you if I have any questions about it.",redFlags:["No red flags detected"],gap:"No explicit next step or follow-up date agreed after the call",summary:"Strong vendor onboarding call. Sergio walked Gabrielle through Launchpad offering clearly. Concrete follow-up date needed.",dims:[4,4,4,5,4,4,3],url:"https://fathom.video/share/PbyNMCxCUQeRi4sQBpxaHG65_5qQyKoi"},
+  {date:"03-25-2026",client:"Aqua Teak",am:"Asif Nazir Sindhu",sev:"ok",score:4.14,sentiment:"Positive",quote:"My main focus is making sure all the items that account for 95% of our revenue are staying in stock at all times.",redFlags:["Potential margin erosion — client reports losing ~$110 per sale on at least one SKU","Creative/SEO scope confusion with Howard not fully resolved"],gap:"No clear owner or deadline for closing the loop on contract misunderstanding with Howard",summary:"Focused, collaborative call. Clear Big Spring Sale strategy and stock discussions. Contract clarification with Howard urgently needed.",dims:[4,4,5,4,4,5,4],url:"https://fathom.video/share/-iUBxuYtYzQuKF3-CVGzPdGfmsPuaRjC"},
+];
+
+let currentFilter = 'all';
+
+function getScoreClass(s) {
+  if (s >= 4.2) return 'score-high';
+  if (s >= 3.5) return 'score-mid';
+  return 'score-low';
+}
+
+function getSevClass(sev) {
+  if (sev === 'alert') return 'sev-alert';
+  if (sev === 'watch') return 'sev-watch';
+  return 'sev-ok';
+}
+
+function getSevLabel(sev) {
+  if (sev === 'alert') return '🔴 Alert';
+  if (sev === 'watch') return '⚠️ Watch';
+  return '🟢 OK';
+}
+
+function getSentClass(s) {
+  if (s && s.toLowerCase().includes('positive')) return 'sentiment-pos';
+  if (s && s.toLowerCase().includes('negative')) return 'sentiment-neg';
+  return 'sentiment-neu';
+}
+
+function renderTable() {
+  const tbody = document.getElementById('callBody');
+  tbody.innerHTML = '';
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  calls.forEach((c, i) => {
+    if (currentFilter !== 'all' && c.sev !== currentFilter) return;
+    if (q && !`${c.client} ${c.am} ${c.quote} ${c.summary}`.toLowerCase().includes(q)) return;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="td-date">${c.date}</td>
+      <td class="td-client">${c.client}</td>
+      <td class="td-am">${c.am}</td>
+      <td><span class="sev-badge ${getSevClass(c.sev)}">${getSevLabel(c.sev)}</span></td>
+      <td class="td-score ${getScoreClass(c.score)}">${c.score.toFixed(2)}</td>
+      <td class="${getSentClass(c.sentiment)}">${c.sentiment}</td>
+      <td class="td-quote">"${c.quote}"</td>
+    `;
+    tr.onclick = () => openModal(i);
+    tbody.appendChild(tr);
+  });
+}
+
+function openModal(idx) {
+  const c = calls[idx];
+  const dimNames = ['Clarity','Flow','Listening','Expertise','Expectations','Relationship','Outcome'];
+  const dimsHtml = c.dims.map((v,i) => `
+    <div class="modal-dim">
+      <span class="modal-dim-val">${v}</span>
+      <div class="modal-dim-name">${dimNames[i]}</div>
+    </div>`).join('');
+  const flagsHtml = c.redFlags.map(f => `<div class="modal-flag ${f==='No red flags detected'?'':f.toLowerCase().includes('explicit')||f.toLowerCase().includes('no clear')?'red':'amber'}">${f}</div>`).join('');
+
+  document.getElementById('modalInner').innerHTML = `
+    <div class="modal-client">${c.client}</div>
+    <div class="modal-meta">${c.date} · ${c.am} · <span class="sev-badge ${getSevClass(c.sev)}" style="display:inline;">${getSevLabel(c.sev)}</span> · Score: <strong style="color:var(--accent)">${c.score.toFixed(2)}</strong></div>
+    
+    <div class="modal-section">
+      <div class="modal-section-label">Key Quote</div>
+      <div class="modal-quote">"${c.quote}"</div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-label">Dimension Scores</div>
+      <div class="modal-dims">${dimsHtml}</div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-label">Red Flags & Communication Gaps</div>
+      <div class="modal-flags-list">${flagsHtml}
+        ${c.gap ? `<div class="modal-flag amber">⚠️ Gap: ${c.gap}</div>` : ''}
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-label">Summary</div>
+      <div class="modal-summary-text">${c.summary}</div>
+    </div>
+
+    <a class="modal-link" href="${c.url}" target="_blank">↗ View Recording in Fathom</a>
+  `;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal')) {
+    document.getElementById('modal').classList.remove('open');
+  }
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function filterTable() { renderTable(); }
+
+// Initial render
+renderTable();
+
+
+// ── AM TREND GRAPHS ──────────────────────────────────────────
+const AM_COLORS = {
+  'Asif Nazir Sindhu':  '#c8a96e',
+  'Bradley Pierce':     '#60a5fa',
+  'Daniel Gonzalez':    '#a78bfa',
+  'Aeris Del Mar':      '#34d399',
+  'Gabrielle Aboudi':   '#f472b6',
+  'Martin Zerrudo':     '#94a3b8',
+  'Nik Bačić':          '#fb923c',
+};
+
+const PRIMARY_AMS = ['Asif Nazir Sindhu','Bradley Pierce','Daniel Gonzalez','Aeris Del Mar','Gabrielle Aboudi'];
+const DIM_NAMES = ['Clarity','Flow','Listening','Expertise','Expectations','Relationship','Outcome'];
+
+// Group calls by AM, sorted by date
+function getAMData(amName) {
+  return calls
+    .filter(c => c.am === amName)
+    .sort((a,b) => new Date(a.date.replace(/^(\d{2})-(\d{2})-(\d{4})$/,'$3-$1-$2')) - new Date(b.date.replace(/^(\d{2})-(\d{2})-(\d{4})$/,'$3-$1-$2')));
+}
+
+function formatDateShort(d) {
+  const parts = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(parts[0])-1] + ' ' + parseInt(parts[1]);
+}
+
+let lineChart = null;
+let activeAM = 'all';
+
+function buildTabs() {
+  const tabsEl = document.getElementById('amTabs');
+  const allAMs = [...new Set(calls.map(c=>c.am))].filter(a=>a && a!=='Unknown');
+
+  // All tab
+  const allBtn = document.createElement('button');
+  allBtn.className = 'am-tab-btn active';
+  allBtn.textContent = 'All AMs';
+  allBtn.onclick = () => { activeAM='all'; setActiveTab(allBtn); renderLineChart(); };
+  tabsEl.appendChild(allBtn);
+
+  allAMs.forEach(am => {
+    const btn = document.createElement('button');
+    btn.className = 'am-tab-btn';
+    btn.textContent = am.split(' ')[0]; // first name only
+    btn.title = am;
+    btn.onclick = () => { activeAM=am; setActiveTab(btn); renderLineChart(); };
+    tabsEl.appendChild(btn);
+  });
+}
+
+function setActiveTab(btn) {
+  document.querySelectorAll('.am-tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function renderLineChart() {
+  const ctx = document.getElementById('amTrendCanvas').getContext('2d');
+  if (lineChart) lineChart.destroy();
+
+  let datasets = [];
+  let allLabels = new Set();
+
+  const targetAMs = activeAM === 'all'
+    ? PRIMARY_AMS
+    : [activeAM];
+
+  targetAMs.forEach(am => {
+    const amCalls = getAMData(am);
+    if (!amCalls.length) return;
+    amCalls.forEach(c => allLabels.add(c.date));
+  });
+
+  // Sort labels chronologically
+  const sortedLabels = [...allLabels].sort((a,b) => {
+    const pa = a.split('-'), pb = b.split('-');
+    return new Date(`${pa[2]}-${pa[0]}-${pa[1]}`) - new Date(`${pb[2]}-${pb[0]}-${pb[1]}`);
+  });
+
+  targetAMs.forEach(am => {
+    const amCalls = getAMData(am);
+    if (!amCalls.length) return;
+    const color = AM_COLORS[am] || '#94a3b8';
+
+    // Map score to each date
+    const dataMap = {};
+    amCalls.forEach(c => { dataMap[c.date] = c.score; });
+
+    const points = sortedLabels.map(l => dataMap[l] !== undefined ? dataMap[l] : null);
+
+    datasets.push({
+      label: am,
+      data: points,
+      borderColor: color,
+      backgroundColor: color + '18',
+      pointBackgroundColor: color,
+      pointBorderColor: '#0d0f14',
+      pointBorderWidth: 2,
+      pointRadius: 5,
+      pointHoverRadius: 7,
+      tension: 0.35,
+      fill: activeAM !== 'all',
+      spanGaps: true,
+    });
+  });
+
+  lineChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: sortedLabels.map(formatDateShort),
+      datasets,
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            color: '#9ca3af',
+            font: { family: 'DM Mono', size: 11 },
+            usePointStyle: true,
+            pointStyleWidth: 8,
+          }
+        },
+        tooltip: {
+          backgroundColor: '#1a1d26',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          titleColor: '#e8eaf0',
+          bodyColor: '#9ca3af',
+          padding: 12,
+          callbacks: {
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(2) ?? 'N/A'}`,
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6b7280', font: { family: 'DM Mono', size: 10 }, maxRotation: 45 },
+        },
+        y: {
+          min: 1,
+          max: 5,
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: {
+            color: '#6b7280',
+            font: { family: 'DM Mono', size: 10 },
+            stepSize: 0.5,
+            callback: v => v.toFixed(1),
+          },
+        }
+      }
+    }
+  });
+
+  renderRadar();
+}
+
+function renderRadar() {
+  const row = document.getElementById('amRadarRow');
+  row.innerHTML = '';
+
+  const targetAMs = activeAM === 'all' ? PRIMARY_AMS : [activeAM];
+
+  targetAMs.forEach(am => {
+    const amCalls = getAMData(am);
+    if (!amCalls.length) return;
+
+    // Avg dims
+    const avgDims = DIM_NAMES.map((_, i) => {
+      const vals = amCalls.map(c => c.dims[i]).filter(v => v != null);
+      return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : 0;
+    });
+
+    const card = document.createElement('div');
+    card.className = 'am-radar-card';
+
+    const shortName = am.split(' ')[0];
+    card.innerHTML = `<div class="am-radar-name">${shortName}</div><div class="am-radar-canvas-wrap"><canvas id="radar_${am.replace(/\s+/g,'_')}"></canvas></div>`;
+    row.appendChild(card);
+
+    // Draw radar after DOM insert
+    setTimeout(() => {
+      const rCtx = document.getElementById(`radar_${am.replace(/\s+/g,'_')}`).getContext('2d');
+      const color = AM_COLORS[am] || '#94a3b8';
+      new Chart(rCtx, {
+        type: 'radar',
+        data: {
+          labels: DIM_NAMES.map(d => d.substring(0,3)),
+          datasets: [{
+            data: avgDims.map(Number),
+            backgroundColor: color + '25',
+            borderColor: color,
+            borderWidth: 1.5,
+            pointBackgroundColor: color,
+            pointRadius: 2,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: { legend: { display: false }, tooltip: {
+            backgroundColor: '#1a1d26',
+            borderColor: 'rgba(255,255,255,0.1)',
+            borderWidth: 1,
+            titleColor: '#e8eaf0',
+            bodyColor: '#9ca3af',
+            callbacks: { label: ctx => ` ${DIM_NAMES[ctx.dataIndex]}: ${ctx.raw}` }
+          }},
+          scales: {
+            r: {
+              min: 0, max: 5,
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              angleLines: { color: 'rgba(255,255,255,0.06)' },
+              pointLabels: { color: '#6b7280', font: { family: 'DM Mono', size: 9 } },
+              ticks: { display: false, stepSize: 1 },
+            }
+          }
+        }
+      });
+    }, 0);
+  });
+}
+
+// Init after DOM ready
+setTimeout(() => {
+  buildTabs();
+  renderLineChart();
+}, 100);
+
+</script>
+</body>
+</html>
