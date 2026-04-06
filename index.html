@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGL — AM Call QA Leadership Report</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f5ff;
+  --bg2: #ede9ff;
+  --surface: #ffffff;
+  --surface2: #f3f0ff;
+  --border: #ddd8f5;
+  --border2: #c8bff5;
+  --purple: #6b3fa0;
+  --purple-mid: #8b5fc4;
+  --purple-light: #b89ce0;
+  --purple-pale: #ede9ff;
+  --purple-deep: #4a2570;
+  --text: #1e1233;
+  --text-mid: #5c4b7a;
+  --text-muted: #9483ba;
+  --red: #d63c3c;
+  --red-bg: #fff0f0;
+  --red-border: #f5c5c5;
+  --amber: #c07a00;
+  --amber-bg: #fff8e6;
+  --amber-border: #f5dfa0;
+  --green: #1f7a45;
+  --green-bg: #edfaf2;
+  --green-border: #a5dfc0;
+  --accent: #7c3aed;
+  --accent-pale: #f5f0ff;
+  --shadow: 0 1px 3px rgba(107,63,160,0.08), 0 4px 16px rgba(107,63,160,0.06);
+  --shadow-lg: 0 4px 24px rgba(107,63,160,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:14px;
+  line-height:1.6;
+  min-height:100vh;
+}
+
+/* ─── TOP NAV ─── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:56px;
+}
+.topbar-brand{
+  display:flex;align-items:center;gap:10px;
+  font-weight:700;font-size:15px;color:var(--purple-deep);
+}
+.topbar-brand .dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--purple);
+}
+.nav-tabs{
+  display:flex;gap:2px;
+}
+.nav-tab{
+  padding:6px 14px;
+  border:none;background:none;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+  color:var(--text-muted);cursor:pointer;border-radius:6px;
+  transition:all 0.15s;
+}
+.nav-tab:hover{background:var(--surface2);color:var(--purple);}
+.nav-tab.active{background:var(--purple-pale);color:var(--purple);font-weight:600;}
+.topbar-meta{
+  font-size:12px;color:var(--text-muted);
+  display:flex;gap:16px;align-items:center;
+}
+.status-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:20px;
+  font-size:11px;font-weight:600;
+}
+.pill-ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.pill-alert{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.pill-watch{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);}
+
+/* ─── PAGES ─── */
+.page{display:none;padding:32px 40px 80px;}
+.page.active{display:block;}
+
+/* ─── SECTION HEADER ─── */
+.section-head{
+  display:flex;align-items:baseline;gap:12px;
+  margin-bottom:20px;padding-bottom:12px;
+  border-bottom:1px solid var(--border);
+}
+.section-title{
+  font-family:'DM Serif Display',serif;
+  font-size:22px;color:var(--purple-deep);
+}
+.section-sub{font-size:13px;color:var(--text-muted);}
+
+/* ─── STAT CARDS ─── */
+.stat-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:16px;margin-bottom:28px;
+}
+.stat-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px 20px 16px;
+  box-shadow:var(--shadow);
+  position:relative;overflow:hidden;
+}
+.stat-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--border2);
+}
+.stat-card.purple::before{background:var(--purple);}
+.stat-card.red::before{background:var(--red);}
+.stat-card.amber::before{background:var(--amber);}
+.stat-card.green::before{background:var(--green);}
+.stat-num{
+  font-family:'DM Serif Display',serif;
+  font-size:36px;line-height:1;
+  color:var(--text);
+}
+.stat-num.purple{color:var(--purple);}
+.stat-num.red{color:var(--red);}
+.stat-num.amber{color:var(--amber);}
+.stat-num.green{color:var(--green);}
+.stat-label{
+  margin-top:6px;font-size:12px;font-weight:500;
+  color:var(--text-mid);
+}
+.stat-detail{font-size:11px;color:var(--text-muted);margin-top:2px;}
+
+/* ─── CARD ─── */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:24px;
+  box-shadow:var(--shadow);
+  margin-bottom:20px;
+}
+.card-title{
+  font-weight:700;font-size:15px;color:var(--text);
+  margin-bottom:4px;display:flex;align-items:center;gap:8px;
+}
+.card-sub{font-size:12px;color:var(--text-muted);margin-bottom:16px;}
+
+/* ─── TABLE ─── */
+.table-wrap{
+  border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;box-shadow:var(--shadow);
+  margin-bottom:20px;
+}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--surface2);}
+th{
+  padding:10px 14px;text-align:left;
+  font-size:11px;font-weight:600;letter-spacing:0.06em;
+  text-transform:uppercase;color:var(--text-muted);
+  border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+th.r{text-align:right;}
+td{
+  padding:11px 14px;font-size:13px;
+  border-bottom:1px solid var(--border);
+  vertical-align:middle;
+}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr{background:var(--surface);transition:background 0.1s;}
+tbody tr:hover{background:var(--surface2);}
+tbody tr.row-alert{background:#fff8f8;}
+tbody tr.row-watch{background:#fffdf0;}
+
+/* ─── SCORE BADGES ─── */
+.sc{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:5px;
+  font-weight:700;font-size:12px;
+}
+.sc1{background:#fde8e8;color:#c0392b;}
+.sc2{background:#fde8e8;color:#c0392b;}
+.sc3{background:#fef3cd;color:#b8860b;}
+.sc4{background:#e8f5e9;color:#2e7d32;}
+.sc5{background:#ede9ff;color:#6b3fa0;}
+
+/* score bar */
+.sbar-wrap{display:flex;align-items:center;gap:8px;}
+.sbar-bg{
+  flex:1;height:5px;background:var(--bg2);
+  border-radius:3px;overflow:hidden;min-width:60px;
+}
+.sbar-fill{height:100%;border-radius:3px;}
+.sbar-val{font-weight:700;font-size:13px;min-width:32px;text-align:right;}
+
+/* ─── ALERT CARDS ─── */
+.alert-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:16px;margin-bottom:20px;
+}
+.alert-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px;
+  box-shadow:var(--shadow);
+  border-left:4px solid var(--border2);
+}
+.alert-card.alert{border-left-color:var(--red);}
+.alert-card.watch{border-left-color:var(--amber);}
+.alert-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.alert-client{font-weight:700;font-size:15px;color:var(--text);}
+.alert-meta{font-size:12px;color:var(--text-muted);margin-top:2px;}
+.alert-lbl{font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px;}
+.alert-txt{font-size:12px;color:var(--text-mid);line-height:1.55;margin-bottom:10px;}
+.dim-row{
+  display:flex;gap:6px;padding-top:12px;
+  border-top:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.dim-cell{text-align:center;flex:1;min-width:44px;}
+.dim-v{font-weight:700;font-size:16px;}
+.dim-v.s1{color:var(--red);}
+.dim-v.s2{color:var(--red);}
+.dim-v.s3{color:var(--amber);}
+.dim-v.s4{color:var(--green);}
+.dim-v.s5{color:var(--purple);}
+.dim-l{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;}
+
+/* ─── FINDING BLOCKS ─── */
+.finding{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:24px 28px;
+  margin-bottom:16px;
+  box-shadow:var(--shadow);
+  position:relative;overflow:hidden;
+}
+.finding::before{
+  content:'';
+  position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--purple);
+}
+.finding.critical::before{background:var(--red);}
+.finding.warning::before{background:var(--amber);}
+.finding.positive::before{background:var(--green);}
+.finding-tag{
+  font-size:11px;font-weight:600;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--purple);margin-bottom:6px;
+}
+.finding.critical .finding-tag{color:var(--red);}
+.finding.warning .finding-tag{color:var(--amber);}
+.finding.positive .finding-tag{color:var(--green);}
+.finding-title{
+  font-family:'DM Serif Display',serif;
+  font-size:17px;color:var(--text);margin-bottom:10px;
+}
+.finding-body{
+  font-size:13px;color:var(--text-mid);line-height:1.7;
+}
+.finding-body strong{color:var(--text);}
+
+/* ─── QUOTE CARD ─── */
+.quotes-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:14px;margin-bottom:20px;
+}
+.quote-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:18px;
+  box-shadow:var(--shadow);
+}
+.q-text{
+  font-style:italic;font-size:13px;color:var(--text);
+  line-height:1.6;margin-bottom:10px;
+}
+.q-text::before{content:'\201C';font-size:22px;color:var(--purple-light);line-height:0;vertical-align:-5px;margin-right:2px;}
+.q-text::after{content:'\201D';font-size:22px;color:var(--purple-light);line-height:0;vertical-align:-5px;margin-left:2px;}
+.q-meta{font-size:11px;color:var(--text-muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.q-meta strong{color:var(--text-mid);}
+
+/* ─── FILTERS ─── */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+.filter-label{font-size:12px;color:var(--text-muted);font-weight:500;}
+.flt-btn{
+  padding:5px 13px;border-radius:20px;
+  border:1px solid var(--border);background:var(--surface);
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;
+  color:var(--text-muted);cursor:pointer;transition:all 0.15s;
+}
+.flt-btn:hover,.flt-btn.active{
+  background:var(--purple-pale);
+  border-color:var(--purple-light);color:var(--purple);
+}
+.search-input{
+  padding:6px 14px;border-radius:20px;
+  border:1px solid var(--border);background:var(--surface);
+  font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);
+  outline:none;min-width:180px;
+}
+.search-input:focus{border-color:var(--purple-light);}
+
+/* ─── DETAIL PANEL ─── */
+.detail-overlay{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(30,18,51,0.4);
+  backdrop-filter:blur(4px);
+}
+.detail-overlay.open{display:flex;align-items:flex-start;justify-content:flex-end;}
+.detail-panel{
+  width:min(560px,90vw);height:100vh;overflow-y:auto;
+  background:var(--surface);
+  padding:32px;
+  box-shadow:-8px 0 32px rgba(107,63,160,0.15);
+  animation:slideIn 0.25s ease;
+}
+@keyframes slideIn{from{transform:translateX(40px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.detail-close{
+  position:absolute;top:20px;right:24px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:4px 10px;cursor:pointer;
+  font-size:13px;color:var(--text-muted);font-family:'DM Sans',sans-serif;
+}
+.detail-close:hover{background:var(--purple-pale);color:var(--purple);}
+.detail-client{font-family:'DM Serif Display',serif;font-size:22px;color:var(--purple-deep);margin-bottom:4px;}
+.detail-am{font-size:13px;color:var(--text-muted);}
+.detail-section{margin-top:20px;}
+.detail-section-title{
+  font-size:11px;font-weight:600;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--text-muted);
+  padding-bottom:6px;border-bottom:1px solid var(--border);
+  margin-bottom:10px;
+}
+.detail-text{font-size:13px;color:var(--text-mid);line-height:1.65;}
+.call-item{
+  background:var(--surface2);border-radius:8px;
+  padding:12px 14px;margin-bottom:8px;cursor:pointer;
+  border:1px solid var(--border);transition:all 0.15s;
+}
+.call-item:hover{border-color:var(--purple-light);background:var(--purple-pale);}
+.call-item-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.call-item-date{font-size:11px;color:var(--text-muted);}
+.call-item-score{font-weight:700;font-size:14px;}
+.call-item-sent{font-size:11px;color:var(--text-muted);}
+.coaching-box{
+  background:var(--accent-pale);border-radius:8px;
+  padding:14px 16px;margin-top:8px;
+  border:1px solid #d4c2ff;
+}
+.coaching-box-title{
+  font-size:11px;font-weight:700;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--purple);margin-bottom:6px;
+}
+.coaching-item{
+  font-size:12px;color:var(--text-mid);
+  display:flex;gap:8px;margin-bottom:4px;line-height:1.5;
+}
+.coaching-item::before{content:'→';color:var(--purple);flex-shrink:0;font-weight:600;}
+
+/* ─── CHART CONTAINER ─── */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+@media(max-width:820px){.chart-grid{grid-template-columns:1fr;}}
+.chart-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px 24px;
+  box-shadow:var(--shadow);
+}
+.chart-card.wide{grid-column:1/-1;}
+.chart-title{font-weight:700;font-size:14px;color:var(--text);margin-bottom:3px;}
+.chart-desc{font-size:11px;color:var(--text-muted);margin-bottom:16px;}
+
+/* ─── HEAT TABLE ─── */
+.heat-cell{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:38px;height:32px;border-radius:5px;
+  font-weight:700;font-size:12px;
+}
+.h1{background:#fde8e8;color:#c0392b;}
+.h2{background:#fde8e8;color:#c0392b;}
+.h3{background:#fef3cd;color:#b8860b;}
+.h4{background:#e8f5e9;color:#2e7d32;}
+.h5{background:#ede9ff;color:#6b3fa0;}
+
+/* ─── COACHING PAGE ─── */
+.am-coaching-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:16px;margin-bottom:20px;
+}
+.am-coaching-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:20px;box-shadow:var(--shadow);
+}
+.amc-name{font-weight:700;font-size:15px;color:var(--text);margin-bottom:2px;}
+.amc-score{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13px;color:var(--text-muted);margin-bottom:12px;
+}
+.amc-score-num{
+  font-family:'DM Serif Display',serif;font-size:20px;
+  color:var(--purple);font-weight:400;
+}
+.strength-row,.growth-row{margin-bottom:10px;}
+.coaching-lbl{
+  font-size:10px;font-weight:700;letter-spacing:0.1em;
+  text-transform:uppercase;margin-bottom:4px;
+}
+.strength-lbl{color:var(--green);}
+.growth-lbl{color:var(--purple);}
+.coaching-point{
+  font-size:12px;color:var(--text-mid);
+  display:flex;gap:7px;margin-bottom:3px;
+  line-height:1.5;
+}
+.coaching-point.str::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0;}
+.coaching-point.gro::before{content:'↗';color:var(--purple);font-weight:700;flex-shrink:0;}
+.perf-bar-wrap{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.dim-bars{display:flex;flex-direction:column;gap:5px;}
+.dim-bar-row{display:flex;align-items:center;gap:8px;font-size:11px;}
+.dim-bar-label{color:var(--text-muted);width:68px;flex-shrink:0;}
+.dim-bar-bg{flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;}
+.dim-bar-fill{height:100%;border-radius:3px;background:var(--purple-light);}
+.dim-bar-val{width:28px;text-align:right;font-weight:600;color:var(--text-mid);}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:700px){
+  .topbar{padding:0 16px;}
+  .page{padding:20px 16px 60px;}
+  .nav-tabs{display:none;}
+  .stat-row{grid-template-columns:1fr 1fr;}
+}
+
+/* ─── BADGE ─── */
+.badge{
+  display:inline-block;padding:2px 8px;border-radius:12px;
+  font-size:11px;font-weight:600;
+}
+.badge-ok{background:var(--green-bg);color:var(--green);}
+.badge-alert{background:var(--red-bg);color:var(--red);}
+.badge-watch{background:var(--amber-bg);color:var(--amber);}
+.badge-neutral{background:var(--surface2);color:var(--text-muted);}
+
+/* page transition */
+.page{animation:fadeUp 0.3s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+.highlight-best{background:#f0fff5 !important;}
+.highlight-worst{background:#fff5f5 !important;}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="dot"></div>
+    Amazon Growth Lab — QA Report
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('overview',this)">Overview</button>
+    <button class="nav-tab" onclick="showPage('am',this)">By AM</button>
+    <button class="nav-tab" onclick="showPage('clients',this)">By Client</button>
+    <button class="nav-tab" onclick="showPage('alerts',this)">Alerts</button>
+    <button class="nav-tab" onclick="showPage('coaching',this)">Coaching</button>
+    <button class="nav-tab" onclick="showPage('log',this)">Call Log</button>
+  </div>
+  <div class="topbar-meta">
+    <span>Dec 2025 – Apr 2026</span>
+    <span>65 Calls</span>
+  </div>
+</div>
+
+<!-- DETAIL PANEL -->
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)">
+  <div class="detail-panel" id="detailPanel">
+    <button class="detail-close" onclick="closeDetail()">✕ Close</button>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE: OVERVIEW ══════════════ -->
+<div class="page active" id="page-overview">
+
+  <div class="section-head">
+    <div class="section-title">Performance Overview</div>
+    <div class="section-sub">Dec 19, 2025 – Apr 1, 2026 · 65 evaluated calls · 5 active AMs</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card green">
+      <div class="stat-num green" id="s-ok">—</div>
+      <div class="stat-label">🟢 OK Calls</div>
+      <div class="stat-detail" id="s-ok-pct">—</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-num red" id="s-alert">—</div>
+      <div class="stat-label">🔴 Alert Calls</div>
+      <div class="stat-detail">Active churn / performance risk</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="stat-num amber" id="s-watch">—</div>
+      <div class="stat-label">⚠️ Watchlist</div>
+      <div class="stat-detail">Monitor closely</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-num purple" id="s-avg">—</div>
+      <div class="stat-label">Overall Avg Score</div>
+      <div class="stat-detail">Across 7 dimensions / 5</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="s-best-call">—</div>
+      <div class="stat-label">Highest Single Call</div>
+      <div class="stat-detail" id="s-best-call-who">—</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-num red" id="s-worst-call">—</div>
+      <div class="stat-label">Lowest Single Call</div>
+      <div class="stat-detail" id="s-worst-call-who">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num purple" id="s-top-am">—</div>
+      <div class="stat-label">Top AM Avg</div>
+      <div class="stat-detail" id="s-top-am-who">—</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="stat-num amber">100%</div>
+      <div class="stat-label">Owner Gap Rate</div>
+      <div class="stat-detail">Missing action-item owners across all calls</div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-title">Avg Score by Dimension</div>
+      <div class="chart-desc">Team-wide average across all 65 calls</div>
+      <canvas id="dimChart" height="220"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Alert Distribution by AM</div>
+      <div class="chart-desc">Number of flagged calls per account manager</div>
+      <canvas id="alertChart" height="220"></canvas>
+    </div>
+    <div class="chart-card wide">
+      <div class="chart-title">Monthly Score Trend</div>
+      <div class="chart-desc">Average QA score per month — Dec 2025 through Apr 2026</div>
+      <canvas id="trendChart" height="130"></canvas>
+    </div>
+  </div>
+
+  <!-- Dimension Heatmap -->
+  <div class="card">
+    <div class="card-title">Dimension Heatmap by AM</div>
+    <div class="card-sub">Average scores per evaluation criterion. Sorted by overall score descending.</div>
+    <div class="table-wrap" style="margin-bottom:0">
+      <table>
+        <thead>
+          <tr>
+            <th>Account Manager</th>
+            <th>Calls</th>
+            <th>Clarity</th><th>Flow</th><th>Listening</th><th>Expertise</th>
+            <th>Expectations</th><th>Relationship</th><th>Outcome</th>
+            <th>Overall</th>
+          </tr>
+        </thead>
+        <tbody id="heatBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Systemic Findings -->
+  <div class="section-head" style="margin-top:32px">
+    <div class="section-title">Systemic Findings</div>
+    <div class="section-sub">Leadership-level patterns across the full dataset</div>
+  </div>
+
+  <div class="finding critical">
+    <div class="finding-tag">Critical — 100% Prevalence</div>
+    <div class="finding-title">Missing Action-Item Ownership Across All Evaluated Calls</div>
+    <div class="finding-body">Every single evaluated call — <strong>65 of 65</strong> — carries a flagged communication gap for missing explicit owners and/or deadlines on agreed action items. This is not an individual training gap. It is a <strong>structural process failure</strong>. AMs agree on next steps verbally but do not summarize them with names, dates, and accountability. "It'll go in Slack" is treated as a closure mechanism. Without a mandatory call-close SOP (owner · action · date), this remains the #1 systemic churn risk across the entire portfolio.</div>
+  </div>
+
+  <div class="finding critical">
+    <div class="finding-tag">High Priority — Daniel Gonzalez</div>
+    <div class="finding-title">4 Alerts Including Two Ghost Calls — Pattern Requires Direct Intervention</div>
+    <div class="finding-body">Daniel has the highest absolute alert count (4 🔴) relative to his 14-call volume. Two alerts are ghost calls where <strong>no client showed up and no recovery action was taken</strong> — no agenda reset, no immediate client message, no reschedule confirmed. His Flow (3.5) and Expectations (3.1) scores are the weakest of active AMs. Strong relationship scores (4.6) mask execution gaps that are becoming a pattern. Leadership should review Daniel's call prep and ghost-call protocol directly.</div>
+  </div>
+
+  <div class="finding warning">
+    <div class="finding-tag">High Priority — Expectations Dimension</div>
+    <div class="finding-title">"Expectations" Is the Weakest Dimension Across the Entire Team</div>
+    <div class="finding-body">Expectations management averages <strong>3.6–3.7</strong> across the team — the lowest of all 7 dimensions and where churn begins. Lumino complained about unresolved performance for months. Peppertree said projections were "planets apart." Flintts questioned ad spend ROI. AMs consistently score 4.5+ on Listening and 4.8+ on Relationship, but fail to set explicit, bounded, measurable expectations. <strong>Strong rapport is masking expectation gaps that clients eventually surface as dissatisfaction.</strong></div>
+  </div>
+
+  <div class="finding warning">
+    <div class="finding-tag">Risk — Compliance</div>
+    <div class="finding-title">Amazon TOS Violation Risk in Client-Facing Call</div>
+    <div class="finding-body">In the DNA Sellers call (Asif, Jan 5), multiple review-generation tactics — including friends/family reviews, insert-based incentives, and third-party review services — were discussed without a compliance disclaimer. These are flagged as <strong>high-risk or explicitly against Amazon TOS</strong>. If a client acts on this and the account gets flagged, AGL carries reputational and contractual exposure. A compliance review of how review strategy is framed in client calls is recommended.</div>
+  </div>
+
+  <div class="finding positive">
+    <div class="finding-tag">Positive Signal — Protect This Baseline</div>
+    <div class="finding-title">Relationship & Listening Are Consistent Strengths</div>
+    <div class="finding-body">Despite structural gaps, AMs consistently score <strong>4.5–5.0 on Relationship</strong> and <strong>4.3–5.0 on Listening</strong>. Clients feel heard, they trust the team, and they regularly express genuine appreciation. "We are officially partners… we are teammates" (Snow), "That's better than we've ever done in January, by a wide margin" (Thrival), "You guys reply awesome… we appreciate you" (GoBrewing). This trust base is a real competitive asset — the QA system should elevate execution without eroding this warmth.</div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE: BY AM ══════════════ -->
+<div class="page" id="page-am">
+  <div class="section-head">
+    <div class="section-title">Performance by Account Manager</div>
+    <div class="section-sub">Click any row to expand individual AM details and call history</div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Account Manager</th>
+          <th>Calls</th>
+          <th>Avg Score</th>
+          <th>Clarity</th><th>Flow</th><th>Listening</th><th>Expertise</th>
+          <th>Expectations</th><th>Relationship</th><th>Outcome</th>
+          <th>🔴</th><th>⚠️</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="amTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE: BY CLIENT ══════════════ -->
+<div class="page" id="page-clients">
+  <div class="section-head">
+    <div class="section-title">Performance by Client Account</div>
+    <div class="section-sub">Click any row to view full call history for that client</div>
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">Filter:</span>
+    <button class="flt-btn active" onclick="filterClients('all',this)">All</button>
+    <button class="flt-btn" onclick="filterClients('alert',this)">Has Alert</button>
+    <button class="flt-btn" onclick="filterClients('ok',this)">Clean Only</button>
+    <input class="search-input" id="clientSearch" placeholder="Search client…" oninput="renderClientTable()">
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Client</th>
+          <th>AM</th>
+          <th>Calls</th>
+          <th>Avg Score</th>
+          <th>Best Call</th>
+          <th>Worst Call</th>
+          <th>Status</th>
+          <th>Sentiment</th>
+        </tr>
+      </thead>
+      <tbody id="clientTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE: ALERTS ══════════════ -->
+<div class="page" id="page-alerts">
+  <div class="section-head">
+    <div class="section-title">Active Alerts & Watchlist</div>
+    <div class="section-sub">8 calls flagged across 8 clients — click any card for full detail</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card red">
+      <div class="stat-num red">6</div>
+      <div class="stat-label">🔴 Alert Calls</div>
+      <div class="stat-detail">Immediate leadership attention</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="stat-num amber">2</div>
+      <div class="stat-label">⚠️ Watchlist</div>
+      <div class="stat-detail">Monitor & support</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Ghost Calls</div>
+      <div class="stat-detail">Client no-show, no recovery taken</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-num red">2.14</div>
+      <div class="stat-label">Lowest Alert Score</div>
+      <div class="stat-detail">GoBrewing ghost call · Daniel G</div>
+    </div>
+  </div>
+
+  <div class="alert-grid" id="alertGrid"></div>
+
+  <!-- Client quotes in alert context -->
+  <div class="section-head" style="margin-top:12px">
+    <div class="section-title">Client Voice — Alert Calls</div>
+    <div class="section-sub">Direct quotes from clients in flagged calls</div>
+  </div>
+  <div class="quotes-grid" id="alertQuotes"></div>
+</div>
+
+<!-- ══════════════ PAGE: COACHING ══════════════ -->
+<div class="page" id="page-coaching">
+  <div class="section-head">
+    <div class="section-title">Coaching Recommendations</div>
+    <div class="section-sub">Data-driven strengths and growth areas per AM — generated from 65 evaluated calls</div>
+  </div>
+  <div class="am-coaching-grid" id="coachingGrid"></div>
+
+  <div class="section-head" style="margin-top:12px">
+    <div class="section-title">Best & Worst Calls — Highlights</div>
+    <div class="section-sub">Top 3 highest and lowest scoring calls across the dataset</div>
+  </div>
+  <div id="bestWorstSection"></div>
+</div>
+
+<!-- ══════════════ PAGE: CALL LOG ══════════════ -->
+<div class="page" id="page-log">
+  <div class="section-head">
+    <div class="section-title">Full Call Log</div>
+    <div class="section-sub">All 65 evaluated calls — click any row to expand detail</div>
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">Status:</span>
+    <button class="flt-btn active" onclick="filterLog('all',this)">All (65)</button>
+    <button class="flt-btn" onclick="filterLog('alert',this)">🔴 Alert</button>
+    <button class="flt-btn" onclick="filterLog('watch',this)">⚠️ Watch</button>
+    <button class="flt-btn" onclick="filterLog('ok',this)">🟢 OK</button>
+    <input class="search-input" id="logSearch" placeholder="Search AM or client…" oninput="renderLogTable()">
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Client</th>
+          <th>Account Manager</th>
+          <th>Status</th>
+          <th>CLA</th><th>FLO</th><th>LIS</th><th>EXP</th><th>EXC</th><th>REL</th><th>OUT</th>
+          <th>Avg</th>
+          <th>Sentiment</th>
+        </tr>
+      </thead>
+      <tbody id="logBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════════ SCRIPTS ════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const ALL_CALLS = [{"date": "2025-12-19", "client": "Christopher Radko", "am": "Daniel Gonzalez", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "I think it's going awesome. So thank you guys again.", "flags": "- No red flags detected", "gap": "- Slight ambiguity on exact timing/owner for removing the account health violations after ASIN deletion (Haris will “try” to remove them; no explicit deadline given)", "summary": "This was a strong, collaborative call with clear progress on key items: discount enrollment, account health violations, and Q4 performance. Daniel, Haris, and Mak demonstrated solid expertise, especially around compliance strategy, discounting, and PPC, and the client repeatedly expressed satisfaction and trust. Expectations were mostly well set around year-end sales trends, post-Christmas performance, and communication over the holidays. Minor improvements would be to lock in explicit deadlines/owners for the CEO letter and final violation clean-up so nothing slips post-peak."}, {"date": "2026-01-02", "client": "Christopher Radko", "am": "Daniel Gonzalez", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "It's been awesome and you're doing a great job... everyone’s on the same page now and it feels really good.", "flags": "- Warehouse shipped wrong products and had high breakage, causing CX issues (client-owned, not AGL performance).", "gap": "- Ownership and timing on the FBM/FBA payment discrepancy analysis could be sharper (Daniel will “finish the list” and “talk to Amazon,” but no explicit due date was agreed).", "summary": "Daniel led a highly collaborative, strategic call that combined tactical problem-solving (FBM order closures, payment discrepancies) with thoughtful year-end review themes (warehouse errors, fragile SKUs, carrier issues, and FBA vs FBM strategy). He clearly explained Amazon mechanics (pending payments, refunds, FBA handling) and proposed concrete support: finishing the finance reconciliation, contacting Amazon if needed, building a high-breakage list, and optimizing inventory/discounting. The relationship is very strong; the client repeatedly praised AGL's communication, support, and PPC perfo"}, {"date": "2026-01-05", "client": "Thrival", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "Our Amazon's humming right now… our account's going pretty quickly.", "flags": "- Potential legal/brand risk around aggressively targeting SoRite keywords while settlement discussions are ongoing; needs tight coordination with client’s legal team.", "gap": "- No explicit recap of all agreed changes (SoRite keyword push, Google Ads routing change, Walmart plan, inventory follow-up) with owners and timelines at the end of the call.", "summary": "This was a strong, collaborative call with clear positive sentiment and a very warm, conversational tone. Asif listened closely, validated Cam’s strategy around Google/Meta traffic, and quickly agreed on tactical changes like ramping SoRite keyword bids and re-sharing the partial returns form. He also outlined a sensible initial Walmart plan (optimize listings, secure reviews, start with auto ads) and confirmed the need for Brand Manager access. To level up, Asif should close with a tighter verbal recap of all action items, owners, and timing, and explicitly frame any legal/brand risks around "}, {"date": "2026-01-05", "client": "Snow", "am": "Bradley Pierce", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "We are officially partners… we are teammates.", "flags": "- Minor delay on refreshing Brand Tailored Promotions due to holidays (acknowledged and owned by Bradley)", "gap": "- New vs returning customer and subscription benchmarks: Bradley committed to follow up by end of week, but no explicit recap of owner/date in-call beyond that verbal commitment", "summary": "This was a strong, collaborative call with Snow’s team, focused on PPC mix (branded vs non-branded), new-to-brand vs retargeting strategy, Subscribe & Save growth, and creative testing for key ASINs. Bradley and Rhommel demonstrated deep expertise, used data to support decisions, and were highly responsive to Austin and Diana’s strategic questions, while JP quickly diagnosed a pricing health issue live. Relationship health is excellent: there’s clear rapport, humor, and mutual trust, and the client just confirmed the partnership, signaling strong satisfaction. Main risks are operational (inven"}, {"date": "2026-01-05", "client": "DNA Sellers", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "Let's turn on the campaigns which have profitability and figure out today what to do next.", "flags": "- Multiple suggestions around friends/family reviews, insert-based review incentives, and external review services that are high risk for Amazon TOS violations.", "gap": "- No explicit recap of concrete per-ASIN budgets and profitability targets, despite client asking to set specific budgets by parent ASIN.", "summary": "The call was strong on education and strategy: Asif and Alex clearly explained seasonality, conversion-rate issues, listing optimization, and the Creator Connections/influencer approach, which the client accepted enthusiastically. They listened closely to concerns about ACOS, profitability, and stock constraints, and proposed pragmatic steps like lowering spend, resuming ads slowly, and focusing on listing and review improvements. However, several review-generation tactics discussed are high-risk from a compliance standpoint and should be tightened and reframed. To improve, the AM team should "}, {"date": "2026-01-06", "client": "FMTV", "am": "Bradley Pierce", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "If Amazon's not going to provide the data, we're going to figure out how to make the data ourselves, guys.", "flags": "- Some uncertainty around how Brand Tailored Promotions audiences are engaged and measured (“throwing spaghetti at a wall”) without immediate concrete follow-up answers.", "gap": "- Brand Followers / BTP mechanics: multiple open questions (how Amazon engages followers, overlap of audiences, impact on return rate, etc.) were deferred to Joe without a clear documented follow-up plan or owner/timeline on the call.", "summary": "This was a strong, highly collaborative call with deep strategic discussion on PPC efficiency, Brand Tailored Promotions, and sample/virtual bundle strategy. Bradley and Rhommel demonstrated strong expertise, used data to drive decisions, and were very responsive to Rod’s analytical questions and ideas. The client was engaged, brainstorming with the team, and clearly trusts AGL, as shown by their willingness to test higher discounts and larger BTP “budgets.” Main improvement areas are tightening how unknowns (BTP mechanics, brand followers, returnless returns impact, MBA discrepancies) are con"}, {"date": "2026-01-07", "client": "Lumino Inc", "am": "Asif Nazir Sindhu", "sev": "alert", "cla": 3.0, "flo": 3.0, "lis": 4.0, "exp": 3.0, "exc": 2.0, "rel": 4.0, "out": 2.0, "avg": 3.0, "sent": "Negative", "quote": "What I need is I need to fix this yesterday... I need a daily update on when we're going to fix our campaigns at this point.", "flags": "- Client explicitly states sales are down ~40% YoY with ACoS up and that this has been flagged for “a couple of months” without resolution.", "gap": "- No clear, time-bound action plan was summarized (e.g., which top 4 campaigns will be reverted/optimized by when, and how progress will be reported).", "summary": "The call surfaces a serious performance issue: Lumino’s sales are down ~40% with ACoS materially above target, and the client feels this has not been addressed quickly enough. Asif builds rapport, asks good diagnostic questions, and shows some strategic thinking (profit vs growth, FBA/FBM, promotions), but the conversation drifts into secondary initiatives despite the client’s repeated urgency around fixing core campaigns. The biggest gap is expectation management: there is no concrete, time-bound recovery plan or reporting cadence agreed, which is risky given the client’s internal pressure an"}, {"date": "2026-01-07", "client": "Brooklinen", "am": "Bradley Pierce", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "Beating budget is definitely a success… so yeah, all good things.", "flags": "- Light confusion and fumbling around files/budget sheet early in the call; AM repeatedly apologizes and seems disorganized.", "gap": "- Need clearer, proactive documentation of promo calendar and how it ties to Amazon tactics so AM isn’t discovering key dates live on the call.", "summary": "This was a strong, collaborative call with very positive rapport and clear trust from Brooklinen. Bradley and team listened closely, dug into Q1 promo timing, and aligned on using Best Deals plus PED/coupons to support President’s Day and Friends & Family, while also addressing catalog/review risk and creative updates. There were a few moments of disorganization (file confusion, fuzzy recall on SAS deal rules), but these were handled transparently and with clear intent to follow up. To level up, Bradley should come in more prepped on shared docs and promo calendars, and close with a crisp verb"}, {"date": "2026-01-07", "client": "Thrival", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "I think we got an answer… I look forward to seeing that updated spreadsheet.", "flags": "- No red flags detected", "gap": "- Next step to rerun data (2nd–current) and share updated sheet in Slack was agreed, but no explicit deadline was set.", "summary": "Asif clearly walked the client through the data behind SoRight keyword and ASIN targeting, translating it into concrete daily sales impact and ROAS context. He demonstrated strong expertise on how ASIN targeting supports organic rank and how to operationalize any final legal agreement via negative targeting. The tone was collaborative and supportive, with the client repeatedly confirming they had the clarity needed to proceed in settlement talks. To level up, Asif could tighten the close by time-boxing the follow-up report and giving a crisp verbal summary of AGL’s recommendation on the propos"}, {"date": "2026-01-07", "client": "GoBrewing", "am": "Daniel Gonzalez", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "I'm not a stranger to Slack and you all reply awesome… we appreciate you.", "flags": "- Client has strong anxiety about a repeat of past mass deactivations and large revenue drops.", "gap": "- No explicit timeline was given for when the appeal/letter will be submitted and when the client can expect an update.", "summary": "The call was focused, empathetic, and well-handled around a sensitive account health issue, with Daniel and Haris giving clear explanations of Amazon’s process and proposed tactics. They validated Kris’s concerns, avoided overpromising, and framed the issue as likely isolated while still acknowledging Amazon’s unpredictability. Concrete next steps were agreed: Haris to draft the compliance letter, internal task creation for review, and Kris to send updated can images and regulatory documents. To level this up, the team should tighten expectation management by clearly stating timelines and expl"}, {"date": "2026-01-07", "client": "July", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 4.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "No, that's good. As long as we could maybe start to look at that monthly.", "flags": "- No red flags detected", "gap": "- Monthly category vs. brand performance report was agreed but cadence/owner not explicitly summarized (Asif implied ownership but no clear timing beyond “monthly”)", "summary": "This was a strong, well-structured call with clear progress updates on backpacks, category benchmarking, fees, and creative testing. Asif demonstrated strong expertise using SmartScout data, fee analysis, and testing methodology, which the client received positively. Relationship and tone were warm and collaborative, with good small talk and alignment on strategy (category benchmarking, video content, and image tests). To level up, Asif could more explicitly lock in owners and timelines for the monthly category report and Creator Connections/video deliverables at the end of the call."}, {"date": "2026-01-09", "client": "NCI", "am": "Bradley Pierce", "sev": "alert", "cla": 3.0, "flo": 3.0, "lis": 4.0, "exp": 3.0, "exc": 3.0, "rel": 4.0, "out": 4.0, "avg": 3.43, "sent": "Neutral", "quote": "The sense of urgency needs to be heard... it's been a week.", "flags": "- One-week delay on virtual bundle access caused by internal Ops miscommunication, only discovered live on the call.", "gap": "- No clear, time-bound owner assigned on the call for resolving the ads-block issue beyond “talk to my boss” and “waiting on Amazon escalation.”", "summary": "Bradley handled a messy situation with good empathy, repeated apologies, and ultimately got the core virtual bundle permissions issue unblocked during the call. He acknowledged the internal error transparently and committed to same-day resolution on the bundle plus Monday timing for A+ uploads, which helped stabilize the relationship by the end. However, the client had already experienced a week-long delay, voiced clear frustration, and saw the root cause (internal Ops miscommunication and UI confusion) play out live, which undermines perceived expertise and urgency. Improvement areas: proacti"}, {"date": "2026-01-12", "client": "TFT", "am": "Bradley Pierce", "sev": "watch", "cla": 4.0, "flo": 3.0, "lis": 5.0, "exp": 4.0, "exc": 3.0, "rel": 5.0, "out": 3.0, "avg": 3.86, "sent": "Neutral-to-Positive", "quote": "In the next 24 to 48 hours, I would like to be able to send the link to someone...and have a first sale come in.", "flags": "- Client has had inventory in FBA for 2–3 weeks with no sales yet, causing discouragement and urgency.", "gap": "- No clear, time-bound owner was assigned for: (1) resolving stranded inventory, (2) confirming all TF SKUs are covered by safety documentation, (3) getting a first sale live within 24–48 hours, and (4) inventory forecasting/supply chain support.", "summary": "The call had strong rapport and deep, consultative discussion around brand stores, social/video strategy, Twitch, and holiday promotion tactics. Bradley listened well, validated frustrations, and showed solid Amazon expertise, which helped maintain generally positive sentiment despite the client’s stress. However, the meeting was loosely structured, with many topics covered but only a few clearly locked next steps, and several critical issues (stranded inventory, first-sale timing, shipment reimbursement, inventory forecasting) lacked explicit owners and deadlines. To improve, Bradley should t"}, {"date": "2026-01-12", "client": "MoreYellow", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "It sounds to me like the most important critical thing I need to do is get this UPC code printed immediately.", "flags": "- No red flags detected", "gap": "- Action items are referenced as going into the day-to-day Slack channel, but owners/timelines were not clearly summarized live on the call (e.g., who owns A+ revisions vs. storefront upload vs. insert redesign).", "summary": "This was a highly collaborative, tactical call focused on shipments, packaging, account health, and creative (A+ and storefront). Asif demonstrated strong Amazon expertise, clearly explaining account health scoring, shipment options, review strategy, and A+ standard vs. premium sequencing. The tone was warm and reassuring, especially around the earlier account health scare, and Jordan appeared engaged and aligned on priorities. To level up, Asif could close with a crisper verbal recap of owners and deadlines for each action item (weights, UPC inserts, box timing, A+ comments, storefront files)"}, {"date": "2026-01-13", "client": "GoBrewing", "am": "Daniel Gonzalez", "sev": "alert", "cla": 3.0, "flo": 1.0, "lis": 3.0, "exp": 2.0, "exc": 1.0, "rel": 4.0, "out": 1.0, "avg": 2.14, "sent": "Neutral", "quote": "Maybe we need to reschedule. Let's wait five more minutes and if he does not join, I'll reschedule a call.", "flags": "- No client representative from GoBrewing appears to have joined; the entire call was internal chatter and waiting.", "gap": "- Meeting purpose (“Account Review”) was not restated or converted into a backup internal working session once it was clear the client was absent.", "summary": "This call did not achieve its stated purpose as an account review with GoBrewing; it became an internal chat plus waiting room with no client present. While the internal tone between team members was friendly and positive, there was no structured attempt to salvage the time (e.g., internal planning on GoBrewing) or to clearly manage expectations with the client. The lack of defined next steps, owner, and timing for rescheduling creates risk of appearing disorganized or inattentive to the client. Daniel should tighten meeting openers (agenda + attendance check), immediately message the client w"}, {"date": "2026-01-13", "client": "Posterity Health", "am": "Daniel Gonzalez", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 4.0, "exp": 4.0, "exc": 4.0, "rel": 4.0, "out": 4.0, "avg": 4.0, "sent": "Positive", "quote": "Let's spend 2,500 for the rest of this month and let's just get back together and talk about the results.", "flags": "- Early confusion and concern from leadership about not being able to find the product on Amazon (visibility and trust risk if not resolved with results soon)", "gap": "- No explicit recap of concrete next steps/owners/timelines (e.g., who is updating campaigns to $2,500, when to reconvene, and how results will be reported)", "summary": "The team successfully resolved the immediate payment method issue and provided a thorough education on PPC, organic ranking, and competitive dynamics, which helped calm leadership concerns. Daniel and Mak demonstrated solid expertise and used data (CPC, impressions, early order) to justify spend and explain why visibility has been limited. The client ultimately agreed to proceed with a $2,500 PPC budget for the rest of the month and reconvene after seeing results, indicating maintained trust and buy-in. To improve, the AM should tighten the close by clearly summarizing decisions, assigning own"}, {"date": "2026-01-16", "client": "Mavi", "am": "Bradley Pierce", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "That was a really, really big win.", "flags": "- Client comments on December SEO were missed because they were only left inside an Excel sheet and not surfaced to the team.", "gap": "- SOP gap: No clear process to capture/track client feedback left as comments inside shared documents (Excel/Sheets), leading to missed actions.", "summary": "The call was strong on relationship-building and technical expertise, with Bradley and Rhommel clearly explaining performance drivers, pricing mechanics, and promotion strategy. Zuhal was engaged, appreciative, and repeatedly expressed satisfaction, especially around the Converse IP resolution and ZSP performance. The main risk is operational: client feedback on SEO was missed due to a process gap in how document comments are handled, which Bradley appropriately owned and addressed live. Going forward, the AM should tighten SOPs around feedback capture (Slack pings for comments, explicit owner"}, {"date": "2026-01-16", "client": "Strauss Naturals", "am": "Aeris Del Mar", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 4.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "No, no, that sounds good to us.", "flags": "- No red flags detected", "gap": "- Next steps are implied (weekly budget increase, SEO feedback, assets and certifications to be shared) but not summarized in a single, clear recap to confirm owners and timelines.", "summary": "The call was effective, data-driven, and clearly framed around increasing ad spend and growth with controlled TACoS. Katarina demonstrated strong PPC expertise, walking the client through performance, strategy (generic/long-tail, SBV, SD remarketing), and a gradual budget ramp-up, while Aeris reinforced SEO and compliance workstreams. The client was engaged, aligned on focusing top ASINs, and repeatedly affirmed that the plan “sounds good,” indicating strong trust and positive sentiment. To level up, the team should close with a crisp verbal recap of all action items (who does what by when) an"}, {"date": "2026-01-20", "client": "GoBrewing", "am": "Daniel Gonzalez", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "Can we not be vendor central, and can we take Bureau off the number one spot?", "flags": "- No red flags detected", "gap": "- Next steps on the loss-leader SKU strategy (which SKUs, target price, and timing) were agreed conceptually but not summarized with clear owners and dates.", "summary": "This was a strong, strategic call with Daniel, Mak, and Haris showing deep expertise on Vendor Central, competitive positioning, and new product launches. The team pushed back thoughtfully on Vendor Central, aligned on a smart loss-leader approach to chase the #1 spot, and scoped Assembly’s launch budget and compliance needs. Relationship and tone were excellent; Kris was highly engaged and collaborative, and the team handled his questions directly and confidently. To level up, they should close meetings with a crisp recap of owners, timelines, and follow-ups for the loss-leader plan, Assembly"}, {"date": "2026-01-20", "client": "Thrival", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "That's better than we've ever done in January, by a wide margin.", "flags": "- No red flags detected", "gap": "- Next steps on Walmart review export rely on Matt but there’s no explicit deadline recap or confirmation of who sends what to AGL once the export is ready.", "summary": "This was a strong, collaborative call with very positive sentiment and clear evidence that the client is seeing record performance and trusts AGL’s strategy. Asif clearly explained Walmart progress (reinstatements, variations, review syndication) and aligned on a $2K/month Walmart ads test with acceptable breakeven/negative tolerance. The team also engaged thoughtfully on future positioning if Thrival acquires SoRite tools/patents, showing strategic depth. To improve, Asif could tighten the close by explicitly summarizing owners and timelines for the Walmart review export, Walmart ads launch, "}, {"date": "2026-01-20", "client": "Modaura", "am": "Daniel Gonzalez", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "Whatever we need to do, let's just do it.", "flags": "- Category sabotage and hijackers have materially hurt sales and account health (external risk, not AM-caused).", "gap": "- Transparency enrollment ownership is a bit fuzzy (Haris vs. Maura’s primary account); needs a clearly documented DRI and deadline.", "summary": "This was a strong, high-stakes call where Daniel and the team showed clear ownership, empathy, and deep tactical expertise around hijackers, category suppression, transparency, and PPC. The client is highly engaged, emotionally invested, and ends the call trusting the team and aligned on aggressive actions (maintaining promo price this week, pushing PPC, pursuing transparency, and preparing a 7-quart launch as a variation). The team did well to translate complex operational and legal dynamics into next steps and to reassure Maura without being defensive. Main improvement areas are tightening e"}, {"date": "2026-01-20", "client": "PureWay Compliance", "am": "Daniel Gonzalez", "sev": "ok", "cla": 3.0, "flo": 2.0, "lis": 4.0, "exp": 3.0, "exc": 2.0, "rel": 5.0, "out": 2.0, "avg": 3.0, "sent": "Neutral", "quote": "I think if we launch the new products, we can go much beyond that.", "flags": "- Key client stakeholders (Omar, Jack) did not join; call was effectively stalled and may need rescheduling.", "gap": "- No clear confirmation on whether the meeting was officially rescheduled or what the new time is.", "summary": "The call shows strong rapport and a warm, friendly tone between Daniel and Mak, but the business objectives of the “account review” were not meaningfully advanced. Daniel outlined a solid agenda (new product, stock, B2B, PPC) and briefly referenced strong MoM growth and annual revenue targets, yet the discussion quickly shifted to personal and geopolitical topics. With key decision-makers absent, expectations around rescheduling, next steps, and ownership of Seller Central access were left vague. To improve, Daniel should tighten meeting structure, confirm reschedule details live, and close wi"}, {"date": "2026-01-21", "client": "Brooklinen", "am": "Bradley Pierce", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "I'm open to literally anything under the sun to hit a revenue target.", "flags": "- Client is materially under monthly ad budget (~$68–70K) and under revenue targets, creating pressure from investors.", "gap": "- No explicit owner/timeline was stated for: (1) reallocating budget into DSP within the $244K cap, and (2) resolving the comforter parentage/flat file issue (Yusuf involvement mentioned but not clearly assigned with a due date).", "summary": "The call was collaborative and solution-oriented, with Alyssa clearly voicing concerns about under-spend and missed revenue while remaining very open to testing and new tactics. The team did a strong job explaining search volume constraints, showing data, and positioning DSP as a lever, leading to alignment on using January as a test month and flexibly deploying the $244K budget across search and DSP. Relationship and tone were excellent; Alyssa repeatedly expressed appreciation and excitement, especially around DSP. To level up, the AM team should tighten ownership and timelines around DSP bu"}, {"date": "2026-01-21", "client": "July", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "Looking forward to a great year with new initiatives. I believe we can definitely, there's room for a lot of growth.", "flags": "- No red flags detected", "gap": "- DSP reporting cadence and exact KPI framework were not clearly defined (timing and format of “first reports” remains vague).", "summary": "This was a strong, proactive call with Asif leading a strategic discussion on growth levers: 0% APR installments, Creator Connections, overstock mitigation, bundles, KSAFE launch, DSP, and UK expansion. The client was highly engaged, agreed to multiple initiatives, and the tone was collaborative and optimistic. Asif demonstrated solid Amazon expertise and tailored recommendations (e.g., physical bundles, Launchpad deal economics, review strategy, KSAFE education). To level up, Asif should close each topic with a crisp recap of owners, timelines, and KPIs—especially for DSP reporting, Creator C"}, {"date": "2026-01-27", "client": "PureWay Compliance", "am": "Daniel Gonzalez", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "Let's try it for one month and keep an eye on it then. Let's try 5k more in February.", "flags": "- No red flags detected", "gap": "- Tasks were mentioned verbally (B2B tiers, Brand Tailored Promotions, creative quote, Feb +$5k PPC test) but specific owners/timelines were not clearly restated to the client.", "summary": "This was a strong, data-driven call with clear wins highlighted (10% MoM sales growth, rising market share, and strong mailback positioning). Daniel and Mak handled Omar’s questions on organic vs PPC mix and budget strategy with confidence and solid explanations, leading to approvals on B2B discount restructuring, reactivating Brand Tailored Promotions, new creative, and a +$5k PPC test in February. The tone was collaborative and friendly, and Omar appeared engaged and satisfied with performance and plans. To level up, the team should more explicitly assign owners/timelines and define success "}, {"date": "2026-01-28", "client": "AquaTeak", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 5.0, "flo": 5.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 5.0, "avg": 4.86, "sent": "Positive", "quote": "That's fantastic… Looking forward to seeing what the team can do.", "flags": "- No red flags detected", "gap": "- Minor: Timing/owner for the StoreAutomator deactivation per ASIN is left as an internal client task; Asif could have explicitly confirmed who (by name) will own that and how they'll confirm it's done before changes go live.", "summary": "This was a strong, high-value call where Asif confidently led the agenda, resolved the access issue live, and then moved into strategy (ASIN prioritization, brand tailored promotions, Creator Connections, and listing restructuring). He demonstrated deep Amazon expertise, clearly explained parent/child ASIN logic, and adapted quickly to client preferences on which ASINs to prioritize, which built trust. Expectations were mostly well set around timelines (promos in 3 days, restructuring plan Friday/Monday, creative review via Slack/loom, COGS file needs, video folder, PICFU access). The relation"}, {"date": "2026-02-02", "client": "Thrival", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "That's good news. That's really good news.", "flags": "- Amazon warning that the black bullseye ASIN is at risk of suspension due to negative reviews/return comments.", "gap": "- No explicit owner/timeline assigned for addressing the Amazon black bullseye ASIN warning (root-cause review, content/positioning changes, or mitigation plan).", "summary": "The call was collaborative and strategy-focused, with Asif clearly explaining tradeoffs around separating variations, pricing strategy, and ad performance. The Thrival team was highly engaged, aligned with maintaining the current core strategy, and appreciative of AGL’s input and vigilance (e.g., Walmart metrics, DSP, review transfer). Key risks were surfaced (Amazon ASIN warning, Walmart fulfillment SLAs, future SoRite advertising changes), but ownership and timelines for mitigation were not crisply locked in on the call. Overall, the relationship appears very strong and the client sentiment "}, {"date": "2026-02-03", "client": "Do it Rite", "am": "Daniel Gonzalez", "sev": "alert", "cla": 3.0, "flo": 2.0, "lis": 4.0, "exp": 3.0, "exc": 2.0, "rel": 4.0, "out": 3.0, "avg": 3.0, "sent": "Neutral", "quote": "We already have a plan, so we can just start new listing and they can make a shipment for them.", "flags": "- Core client stakeholders (Ann and Joe) did not attend; meeting effectively became an internal working session.", "gap": "- No structured agenda or reset once it was clear the client wasn't joining.", "summary": "This call ended up as an internal coordination discussion with Pavel rather than a true client account review, as the primary client contacts did not join. Daniel and Pavel did align on a high-level plan to start a new listing/ASIN with updated labels and ship ~100 units, showing good collaboration and responsiveness. However, the meeting lacked structure, a clear agenda, and a formal recap of owners and timelines, especially around shipments and listing creation. The main risks are unresolved product quality perception, low inventory, and the absence of a clearly defined, client-communicated "}, {"date": "2026-02-04", "client": "AquaTeak", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 5.0, "flo": 5.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.71, "sent": "Positive", "quote": "If we can make the customer experience simple... I think it's a win in a lot of ways.", "flags": "- No red flags detected", "gap": "- Next steps are agreed in principle (test CHI variation, review Figma images, review SEO sheet) but no explicit owner-by-date recap at the end", "summary": "This was a strong, high-value strategy and execution call led by Asif, with clear structure: variation strategy, creative review, SEO, and quick updates on promos/ads. Asif demonstrated deep Amazon expertise, handled concerns about customer confusion and Amazon guidance thoughtfully, and used data (reviews, Market Basket Analysis) to justify recommendations. The tone was collaborative and upbeat, with multiple client stakeholders actively engaged and expressing excitement and trust in AGL. To level up further, Asif should close with a crisp verbal recap of owners, timelines, and test success c"}, {"date": "2026-02-04", "client": "July", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "Great to see it up as well and net profit increasing.", "flags": "- No red flags detected", "gap": "- Next steps rely on follow-ups in Slack (Vine units, review strategy, warehouse sale SKUs, Case Safe assets) without explicit owners/timelines captured on the call", "summary": "This was a focused, upbeat call with Alex where Asif clearly walked through performance, returns, and profitability, and tied results back to category context. The relationship is strong and collaborative, with Alex volunteering to support storefront updates and content, and Asif proactively suggesting tactics (flash sale on Amazon, Vine, Creator Connections). Expectations were mostly well managed, though several items were deferred to Slack without explicit recap of owners and deadlines. Overall, the account appears healthy with positive sentiment; Asif can level up by ending with a crisp ver"}, {"date": "2026-02-05", "client": "Christopher R", "am": "Daniel Gonzalez", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "This is everything we needed, I think.", "flags": "- No red flags detected", "gap": "- Next steps on ShipStation/Cavallo integration are verbally assigned to Pavlo but timing/communication channel for follow-up could be clearer", "summary": "This was a strong, collaborative call focused on tightening customer service workflows and FBM order handling. Daniel clearly walked Yeraldin through Seller Central, permissions, and the new tracker, while Pavlo added thoughtful input on potential automation via ShipStation and Cavallo. The client expressed high appreciation for AGL’s December support and seemed reassured by the processes and policies aligned on the call (e.g., “keep it as a gift” for duplicate shipments). Main improvement areas are to formalize and document the follow-up plan on the integration investigation and to clearly de"}, {"date": "2026-02-09", "client": "Peppertree", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 3.0, "rel": 5.0, "out": 4.0, "avg": 4.14, "sent": "Positive", "quote": "It sounds like there's a plan and there's a method to it… Settle the nerves a little bit.", "flags": "- Client is clearly anxious about early losses and budget tolerance in a saturated category.", "gap": "- Expectation management around the original AJ forecast vs. current reality wasn’t fully reconciled; no explicit reset of month-one P&L expectations.", "summary": "The team did a strong job calming a nervous client, explaining Amazon fundamentals (reviews, conversion, ranking, PPC as investment) and validating that there is a clear method and plan. Trevon and Asif listened closely, answered detailed questions, and were transparent that net-neutral in month one is unrealistic, which helped build trust. However, they stopped short of giving even a directional loss range or a firm timeline, leaving expectation management only partially addressed. To improve, they should lock in a follow-up date for presenting keyword targets and projected investment, explic"}, {"date": "2026-02-11", "client": "AquaTeak", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "I already see a lot of it's already been corrected. Very, very good. That's great to know.", "flags": "- Slight misalignment on timeline/throughput for optimizing all ~30 CHI variations within two months; client referenced AJ’s prior commitment and wants that pace maintained.", "gap": "- Timeline for completing all CHI variations (all 30+ under one parent) is still somewhat vague; Asif will “work it up internally” but no concrete date was given.", "summary": "This was a strong, high-value call with clear performance updates and strategic initiatives (Brand Tailored Promotions, Creator Connections, Subscribe & Save, CHI variations) explained in depth. Asif demonstrated strong expertise, pushed back thoughtfully on Amazon ad rep incentives, and maintained a collaborative, upbeat tone that the client clearly appreciated. The main risk is around delivery expectations on the volume and timing of CHI listing work, where the client referenced a prior promise and wants all 30 done within two months. To improve, Asif should tighten expectation management by"}, {"date": "2026-02-17", "client": "Thrival", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "Our website's humming today, so it leads me to believe that people are seeing it.", "flags": "- Potential legal/compliance risk if “SO” trademark guidance is misinterpreted; needs a clearly documented negative keyword list.", "gap": "- No explicit owner or deadline was assigned for creating and implementing the full negative keyword list for “SO” terms.", "summary": "The call was collaborative and solution-focused, with Asif clearly walking through trademark keyword constraints, pricing levers, and the new bundle strategy. The client was engaged, shared performance context (website vs. Amazon), and expressed optimism about listing improvements and upcoming product changes. Asif demonstrated good listening and flexibility, deferring pricing decisions to the client while outlining the trade-offs between price, ad spend, and BSR. To level up, Asif should tighten expectation management by assigning explicit owners, timelines, and documentation for the negative"}, {"date": "2026-02-17", "client": "Mineral Moon", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "I'm looking forward to jumping in today… I think it's worth exploring.", "flags": "- Client explicitly concerned about stagnation at ~$20K/month and drop in Redemy sales (2,000 to ~500 units).", "gap": "- No clear, time-bound owner on: (1) when Asif will send the Amazon attribution/meta links and ranking plan; (2) when Ryan will align with the paid media agency and board on off-Amazon spend.", "summary": "Asif ran a strong, consultative call that clearly diagnosed the plateau (premium price + low reviews + compliance limits) and tied it to Amazon mechanics in a way the client understood. He listened closely to Ryan’s concerns about stagnation and review issues, acknowledged constraints, and proposed concrete levers: compliant listing language, off-Amazon traffic via Meta/Google with attribution links, and a structured ranking spend test once ratings improve. The tone was warm and collaborative, with Ryan repeatedly engaging, asking tactical questions, and ending the call appreciative and aligne"}, {"date": "2026-02-18", "client": "AquaTeak", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 3.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "We're very happy with what you're doing... it's really more about the pay schedule and what we paid for and what we're getting.", "flags": "- Client explicitly raised concern that they “paid for the speed, but we’re not getting it” regarding SKU/creative delivery vs. the promised 5-per-month pace.", "gap": "- Expectation Management: Original scope/timeline (5 parent ASINs per month including all children) was not proactively revisited when delays emerged; client had to surface the issue.", "summary": "The call was strong on strategy, performance review, and relationship-building. Asif and Ushma clearly explained listing tests, SEO/creative plans, and PPC performance, and the client expressed high confidence in the team’s quality and potential. The main risk is around expectation management and commercial alignment: AquaTeak feels behind relative to the paid “speed” and is looking for both a catch-up plan and some form of compensation. To improve, the AM should immediately follow up with a written delivery schedule for the remaining 9 parent ASINs (including children), clearly assign an inte"}, {"date": "2026-02-18", "client": "July", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "I'm happy to extend the budget, that's fine.", "flags": "- No red flags detected", "gap": "- UK setup responsibilities are generally clear, but timing for completion and Amazon UK onboarding cadence could have been pinned down more explicitly.", "summary": "This was a strong, collaborative call with clear updates on UK expansion, KSAFE progress, and US performance, including ad metrics and spring promotions. Asif and Ushma demonstrated solid expertise, proactively requested additional budget, and tied performance back to broader marketing efforts, which the client responded to very positively. Relationship-building was excellent, especially with the introduction of Suzanne and alignment on content sharing and Slack access. To level up, the team should more explicitly assign owners and timelines for items like PicFu testing, KSAFE creative iterati"}, {"date": "2026-02-20", "client": "Peppertree", "am": "Asif Nazir Sindhu", "sev": "alert", "cla": 2.0, "flo": 2.0, "lis": 3.0, "exp": 3.0, "exc": 1.0, "rel": 2.0, "out": 3.0, "avg": 2.29, "sent": "Negative", "quote": "Please stop being so vague because I need someone that goes like, this is how long it's going to take.", "flags": "- Client explicitly frustrated with vagueness and lack of concrete projections (“I can't work with people like that.”).", "gap": "- Expectation-setting around launch economics and ACoS trajectory was not clearly framed upfront; client feels original 0–6 month projections were “planets apart.”", "summary": "The team did a solid job explaining technical elements (PicFu vs. Brand Experiments, review impact, CPC realities) and acknowledged the competitiveness of the category. However, the call broke down on expectation management and strategic clarity: the client repeatedly asked for concrete projections, timelines, and a roadmap, and felt they were getting only current-state analytics and caveats. Tone remained polite but tense, with the client clearly signaling dissatisfaction and potential churn risk. To improve, the AM team needs to come back with a structured, scenario-based forecast (with rang"}, {"date": "2026-02-27", "client": "Painting4Real", "am": "Asad Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "We really appreciate your help with this… it's not going to be as hard as I think.", "flags": "- Ongoing Amazon compliance pressure (SDS, kids-related flags) could create future listing risk if timelines slip.", "gap": "- No explicit recap of who owns each follow-up item with due dates (e.g., lab recommendation timing, kids-safety documentation plan).", "summary": "The call was highly collaborative and detailed, with Asad and Pavlo giving strong strategic guidance on pricing, FBM setup, shipping workflows, and kids-safety/compliance. The clients were engaged, appreciative, and left with clear confidence in AGL’s expertise, especially around Amazon mechanics and risk management. Next steps were generally clear (FBM SKU + inventory list, removal orders, global sale to $24.99, sourcing kids-safe documentation, exploring labs), though ownership and timelines could have been summarized more explicitly at the end. Overall, this was an effective, relationship-s"}, {"date": "2026-02-27", "client": "Burlap Fabrics", "am": "Asad Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 4.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.14, "sent": "Positive", "quote": "One week from now, okay.", "flags": "- Client explicitly said the previous Amazon plan of action “wasn’t professional enough” and that they had to redo it themselves.", "gap": "- No clear owner or deadline was assigned for: (a) reviewing the client’s successful POA template and updating AGL’s internal POA SOP, and (b) investigating high Amazon return rates with a data-backed analysis.", "summary": "The call was collaborative and warm, with strong rapport and clear alignment on using the DTC site as the source of truth for Walmart listings and creatives. Athen effectively corrected the GTIN/UPC strategy, set an end-of-next-week target for Walmart setup, and reassured the client about resourcing and image adjustments. The client raised valid concerns about Amazon POA quality and high return rates, and also contributed valuable insights (e.g., POA structure, image/weight ideas, and bandana assortment strategy). To improve, the AM team should formalize owners and deadlines for POA process im"}, {"date": "2026-03-02", "client": "Thrival", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 4.0, "exp": 4.0, "exc": 4.0, "rel": 4.0, "out": 4.0, "avg": 4.0, "sent": "Positive", "quote": "We're excited to see how this strategy plays out over the next few weeks.", "flags": "- No red flags detected", "gap": "- Specific owners and deadlines for a few follow-up items were not clearly assigned", "summary": "The call was well-run with clear communication and a collaborative tone, and the client appeared engaged and optimistic. The AM demonstrated solid Amazon expertise and answered questions confidently, which helped reinforce trust. However, some follow-up actions lacked explicit owners and timelines, and success metrics were not fully locked in. Tightening the closing recap with clear responsibilities, dates, and KPI definitions would further strengthen expectation management and outcomes."}, {"date": "2026-03-04", "client": "Aqua Teak", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "Overall, I was very pleased when I finished running the numbers yesterday... lots of really good stuff that has us excited.", "flags": "- Minor confusion around clawback/reimbursement ownership and whether a separate contract was in place.", "gap": "- Clawbacks/reimbursements: unclear SOP on when AGL starts, what contract is required, and how/when reporting will be shared; Asif needs to close the loop with a written summary and next steps.", "summary": "This was a strong, collaborative call with very positive sentiment around performance, mix shift to higher-margin SKUs, and ad efficiency. Asif demonstrated solid expertise on ads, catalog/GL types, and competitive strategy, and he proactively brought ideas for revitalizing the teak care kit with improved imagery. The relationship appears very healthy, with Howard, Christian, and Brandon engaged, appreciative, and open to expanding AGL’s scope (catalog issues, clawbacks). Main improvement areas are tightening communication and documentation around clawback ownership/fees, billing cadence, and "}, {"date": "2026-03-04", "client": "Eshades", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "Put it this way, all $72 million of business goes to your company.", "flags": "- No red flags detected", "gap": "- Timeline and scope for the “extra graphic designer for three months” are agreed verbally but not broken into concrete deliverables or milestones.", "summary": "This was a strong, strategic call with very high trust and enthusiasm from Andy about the partnership and future scale (talking $70M–$100M+ potential). Athen and Asif clearly demonstrated expertise using SmartScout data, validated the client’s projections, and framed the competitive wipeout as a massive opportunity. The negotiation around design resources was handled skillfully, ending with AGL committing to fund an extra designer for three months and to assign someone as soon as tomorrow. To maximize this momentum, the AM team should lock in a written recap with clear owners, deliverables, an"}, {"date": "2026-03-04", "client": "July", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 5.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.57, "sent": "Positive", "quote": "If it's better, it's even better.", "flags": "- No red flags detected", "gap": "- DSP content briefs requested by Jacob; Asif committed to ask DSP team but no explicit owner/timeline was stated on the call.", "summary": "This was a concise, well-run call with clear updates on tools (MerchantSpring), UK account activation, US Spring Sale readiness, creative updates, and case-safe progress. Asif demonstrated strong command of the account, used data effectively (refund rate, daily sales, halo effect), and responded thoughtfully to client questions about performance spikes and DSP content. The tone was warm and collaborative, with multiple client stakeholders engaged and expressing interest and satisfaction. To improve, Asif should more explicitly confirm owners and timelines for the DSP content briefs and the Mer"}, {"date": "2026-03-05", "client": "Loop Family", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 5.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.57, "sent": "Positive", "quote": "I like that strategy... we want to make sure we do this methodically.", "flags": "- Minor: Asif initially referenced Loop’s historical Amazon performance before fully aligning to Brian’s strong preference to ignore internal historicals and focus only on market-level data.", "gap": "- Next steps were agreed in principle (market-demand/seasonality analysis, inventory planning, follow-up with Christina) but no explicit owner/timeline recap was voiced at the end of the call.", "summary": "This was a strong, strategic call with clear rapport between Asif and Brian and very positive sentiment from the client. Asif demonstrated deep Amazon expertise, especially around seasonality, keyword strategy, and the importance of inventory consistency, and he adapted well once Brian clarified that Loop’s historical Amazon data is not a useful benchmark. The conversation aligned on a phased keyword approach, participation in Amazon events, and building a market-demand/seasonality map to drive inventory and promo decisions. To level up, Asif should close future calls with a crisp verbal recap"}, {"date": "2026-03-06", "client": "Flintts Mints", "am": "Asif Nazir Sindhu", "sev": "alert", "cla": 3.0, "flo": 3.0, "lis": 4.0, "exp": 3.0, "exc": 2.0, "rel": 3.0, "out": 3.0, "avg": 3.0, "sent": "Neutral", "quote": "If you're telling me it grows, to me, you're just wasting my money.", "flags": "- Client explicitly questions whether AGL's ad spend is “wasting my money,” especially on branded terms.", "gap": "- No explicit recap of agreed TACoS target, test duration, or success metrics for non-brand growth.", "summary": "The call successfully aligned on the immediate compliance path for the expiration-date violation, with clear ownership on Flintts' side to update the label and send photos so Asif can submit to Amazon. Asif demonstrates solid operational knowledge and is responsive, but his explanations around TACoS and branded vs non-branded impact don’t fully address the client’s core concern about wasted spend and attribution to Meta. Wesley repeatedly pushes for structured testing, clear hypotheses, and segmented reporting, signaling trust risk if this isn’t delivered quickly and transparently. To improve,"}, {"date": "2026-03-09", "client": "Modash.io", "am": "Unknown", "sev": "ok", "cla": 5.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "Thank you so, so much. This was super helpful.", "flags": "- No red flags detected", "gap": "- No gaps identified", "summary": "Gabrielle clearly articulated AGL’s TikTok Shop launch goals, pain points, and scale plans, and kept the conversation focused on operational needs. She listened closely to Modash’s capabilities and limitations, especially around Amazon vs. Shopify tracking, and asked targeted follow-ups to assess fit. The tone was warm, collaborative, and consultative, leaving the vendor with a strong impression of AGL’s professionalism. Next steps are clear: Gabrielle will sync internally on the sales-tracking limitation and respond to Modash’s follow-up email with pricing and a potential trial."}, {"date": "2026-03-09", "client": "Home So", "am": "Aeris Del Mar", "sev": "watch", "cla": 3.0, "flo": 2.0, "lis": 3.0, "exp": 3.0, "exc": 2.0, "rel": 4.0, "out": 2.0, "avg": 2.71, "sent": "Neutral", "quote": "I have too much things to think I would like to do... and I don't have time for that.", "flags": "- Client’s time and focus are being stretched (“too much things… I don’t have time”), suggesting risk of missed follow-through.", "gap": "- No explicit confirmation of next steps or owner regarding the long-tail keyword campaign the client wants to create.", "summary": "This call had a friendly, human tone and good rapport, but it lacked structure and clear business outcomes. The discussion drifted heavily into personal conversation, and when the expected participant did not join, the meeting was not reframed with a clear purpose. Client PPC questions about long-tail keywords and campaign setup were raised but not closed with concrete next steps or timelines. The AM should tighten agendas, explicitly confirm owners and deadlines, and ensure each call ends with a clear recap of actions and expectations."}, {"date": "2026-03-10", "client": "Loop Family", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "This is just really good for all of us to get our brains around this… it's very encouraging.", "flags": "- No red flags detected", "gap": "- No explicit owner or due date was confirmed for Christina sending video assets and pricing guardrails for the spring sale (relies on “I’ll send” over Slack).", "summary": "Asif ran a highly consultative, data-driven session that clearly impressed the client and reframed their understanding of category size, seasonality, and competitive benchmarks. He demonstrated strong expertise in Amazon analytics, SEO strategy, merchandising, and deal mechanics, while staying very responsive to Brian and Christina’s questions and concerns. The tone was collaborative and upbeat, with the client repeatedly expressing excitement and confidence in the direction. To level up further, Asif should tighten explicit next steps by assigning owners and timelines for the custom segment e"}, {"date": "2026-03-11", "client": "Batchwell", "am": "Gabrielle Aboudi", "sev": "ok", "cla": 5.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "No, I'm excited. Thanks for all the hard work.", "flags": "- No red flags detected", "gap": "- No explicit recap of concrete performance targets (e.g., sales goals or KPIs) for the TikTok launch", "summary": "This was a strong, upbeat check-in with clear progress on TikTok influencer onboarding and technical setup (Shopify–TikTok connector confirmed live). Gabrielle communicated clearly, showed good TikTok/influencer knowledge, and aligned well with the client’s desire for elevated, elegant content and relationship-building with creators. The client was highly positive, appreciative of the work, and engaged in problem-solving around 3PL and scaling. To improve, Gabrielle could tighten the close by explicitly summarizing KPIs, owners, and timelines for next steps (weekly updates, influencer ramp tar"}, {"date": "2026-03-11", "client": "Aqua Teak", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "I think what you're doing is working and it feels like we've just begun… I think there's a lot more potential.", "flags": "- Inventory constraints at FBA on key top sellers may cause short-term performance dips.", "gap": "- Next steps on Prime Big Spring Sale participation are implied but not clearly time-bound (e.g., exact date to finalize deal vs. discount list based on inventory).", "summary": "This was a strong, strategic call with clear alignment between Asif and the Aqua Teak team. Asif demonstrated deep expertise on ads, catalog optimization, and event strategy, and the clients explicitly acknowledged seeing higher order values and strong potential. Relationship health is excellent; tone was collaborative, forward-looking, and the client is open to additional growth initiatives. To level up, Asif should tighten explicit next steps (owners + dates) around Prime event planning and the inventory/glitch follow-up so that operational risks are clearly contained."}, {"date": "2026-03-12", "client": "HOME SO", "am": "Aeris Del Mar", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "Knowing that you guys are actively monitoring and making constant adjustments... I'm still optimistic, also relieved.", "flags": "- Significant drop in organic sales and sessions vs last year; client explicitly “very disappointed” in recent performance.", "gap": "- No explicit recap of PPC budget guardrails (exact March target range, how/when it will be adjusted, and success thresholds) beyond general “lower to 30–35k.”", "summary": "This was a strong, collaborative call with clear structure (optimizations → event strategy → PPC deep dive → product/creative feedback) and very warm rapport. The team handled the client’s disappointment about February performance with transparency, solid analysis (organic vs paid, sessions, CPC, competitor dynamics), and concrete corrective actions (lower ad spend, refocus on organic rankings, leverage Big Spring Sale, potential price testing). Aeris and Katarina demonstrated good expertise and were highly responsive to detailed questions on discounts, Rufus, pricing, and creatives, which hel"}, {"date": "2026-03-13", "client": "Kin Kind", "am": "Aeris Del Mar", "sev": "ok", "cla": 3.0, "flo": 4.0, "lis": 4.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.0, "sent": "Positive", "quote": "If your data is like, no, this kills it for us, go ahead.", "flags": "- Momentary confusion around data access/where SEO edits and performance tracking lived (Helium 10, links, tasks).", "gap": "- No clear, single owner and process articulated on how SEO changes will be measured and reported back (beyond “we track organic keyword count”).", "summary": "This was a high-engagement, collaborative call with a very involved client and a strong, positive relationship tone. Aeris and the team listened well, adjusted strategy toward more relevant/natural long-tail keywords, and agreed to refine competitor sets (e.g., adding Wondercide) and update flea & tick and Healthy Poops SEO. The Rufus/SEO portion showed good innovation but could have been framed more succinctly with clearer performance tracking and ownership. Overall, the client appears confident in the team, but tightening explanations and proactively summarizing test outcomes and next steps "}, {"date": "2026-03-16", "client": "Elevex Labs", "am": "Aeris Del Mar", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "It would also be super helpful to see if you guys can tell us if we're missing anything on the PPC front.", "flags": "- No red flags detected", "gap": "- No explicit owner or deadline was set for when Sebastian will confirm eligibility for a strategic growth rep from Amazon", "summary": "This was a strong, collaborative call with Amazon where Aeris positioned AGL well as the active Amazon partner and engaged deeply on PPC and keyword strategy. The client was engaged, asked detailed questions, and clearly trusts both AGL and the Amazon rep for guidance. Concrete next steps were identified: Aeris will send search term reports, implement A+ alt text updates, explore B2B discounts, sponsored brands/video, and leverage Search Query Performance data. To improve, Aeris should lock in a specific follow-up date and confirm ownership/timeline for Amazon’s potential assignment of a strat"}, {"date": "2026-03-18", "client": "Thrival", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "We'll take a crack at this... we'll go through it and then send you a report on which ones we want.", "flags": "- No red flags detected", "gap": "- No explicit owner or deadline was confirmed for the partial returns program follow-up (Asif to resend instructions vs. Cam’s dad handling it)", "summary": "This was a strong, collaborative call with clear rapport and high engagement from the Thrival team. Asif explained deal pricing, search volume trends, and title/app constraints clearly, and responded well to detailed creative feedback on images and A+. The clients left with clear actions on: selecting spring sale SKUs/discounts, revising A+ and images, providing ad copy under 50 characters, and reviewing search volume screenshots. To level up, Asif could tighten ownership and timelines around the partial returns program and explicitly recap all next steps and who is responsible at the end of t"}, {"date": "2026-03-18", "client": "Aqua Teak", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 3.0, "rel": 5.0, "out": 4.0, "avg": 4.14, "sent": "Positive", "quote": "The goal is to get you to really get our top 100 or most of our good products well situated… maybe we’re always going to want you doing creatives.", "flags": "- Conflicting documentation and verbal expectations on the downgraded plan (1 vs 3 creative parent ASINs) with client stating it would be a “major problem” if not honored.", "gap": "- Plan/SOW for the downgraded package is not clearly documented in a single source of truth; handover doc contains contradictory language.", "summary": "This was an effective, collaborative call with strong rapport and clear, client-led objectives around pricing, creatives scope, and Big Spring Sale strategy. Asif handled the scope disagreement calmly, acknowledged the contradiction in internal docs, and committed to clarifying with Ajit while confirming that 10 parent ASINs (including all children) were completed as promised. The discussion on deals vs regular discounts was consultative and detailed, with clear next steps for Asif to send a spreadsheet of deal options/required discounts and an updated promo plan, plus packaging image revision"}, {"date": "2026-03-18", "client": "July", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 5.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.57, "sent": "Positive", "quote": "Perfect, that's great.", "flags": "- No red flags detected", "gap": "- Slight ambiguity on who is ultimately responsible for enrolling the Big Spring packing sales (Nicole vs AGL), though Asif does say he’ll follow up.", "summary": "This was a strong, efficient call with clear decisions on Big Spring sale enrollments and a confident walkthrough of DSP reporting access. Asif demonstrated strong expertise on deals, fees, creative constraints, and listing optimization, and the July team was engaged and appreciative. Next steps around enrolling the Carry-On Pro deal, following up with Nicole on packing sales, completing COGS, and UK replication were implied but not crisply summarized with owners and dates. Tightening the closing recap and explicitly assigning responsibilities would further strengthen expectation management an"}, {"date": "2026-03-19", "client": "Batchwell", "am": "Unknown", "sev": "ok", "cla": 5.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "I'm not like overly concerned because we just started... it would be awesome to turn more sales in through TikTok Shop too.", "flags": "- No red flags detected", "gap": "- SOP reference: Gabrielle promises to send an SOP/video for setting up promotions and a Slack recap; ensure these are actually sent and tracked in the account workspace.", "summary": "This was a strong, collaborative check-in with clear mutual alignment on early-stage TikTok Shop expectations and performance indicators. Gabrielle did a good job validating the client’s feedback on creators, reinforcing the volume/consistency strategy, and using analytics (visitors, page views, adds-to-cart) to show momentum before sales. Pricing and promo levers were discussed concretely, landing on a buy-two-get-one-free and additional coupons for variety/spicy SKUs, with a plan to brief influencers to highlight these offers. Main improvement areas are tightening explicit ownership/timeline"}, {"date": "2026-03-20", "client": "Loop Family", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "I think gathering this weekly data is going to be super helpful to untangle those two things.", "flags": "- No red flags detected", "gap": "- Conversion benchmark analysis vs. competitors was promised but no explicit owner/timeline was restated at the end of the call.", "summary": "This was a strong, collaborative call with clear strategic alignment around seasonality, pricing, and Mother’s Day planning. Asif and team demonstrated solid expertise on Amazon mechanics (reference price, promotions, off-Amazon lift) and proactively proposed a top-of-funnel gifting campaign, which the client approved. The relationship tone was excellent; Brian and Christina were engaged, asked thoughtful questions, and expressed confidence in the team. To level up, the AM should tighten expectation management by clearly assigning owners, timelines, and success metrics for the promised competi"}, {"date": "2026-03-24", "client": "Sellico", "am": "Gabrielle Aboudi", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 4.0, "exp": 5.0, "exc": 4.0, "rel": 4.0, "out": 3.0, "avg": 4.0, "sent": "Positive", "quote": "I'm going to watch this over and I'll get back to you if I have any questions about it.", "flags": "- No red flags detected", "gap": "- No explicit next step or follow-up date was agreed; Gabrielle only mentioned she would rewatch and reach out with questions.", "summary": "This was a strong vendor onboarding/education call where Sergio clearly walked Gabrielle through Sellico’s Launchpad offering, pricing, timelines, and how agencies can white-label the service. Gabrielle was engaged, asked clarifying questions around timelines and creator mechanics, and expressed intent to rewatch the recording, indicating positive interest. Expectations around review timing, campaign setup, and invoicing flow were well set. The main improvement area is locking in a concrete follow-up plan (date, owner, and first test campaign) so the opportunity doesn’t stall after this intro."}, {"date": "2026-03-25", "client": "Aqua Teak", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "My main focus is making sure all the items that account for 95% of our revenue are staying in stock at all times.", "flags": "- Potential margin erosion on certain ASINs due to high ad costs; client reports losing ~$110 per sale on at least one SKU.", "gap": "- Creative/SEO scope confusion with Howard not fully resolved; no clear owner or deadline for closing the loop on the contract misunderstanding.", "summary": "This was a focused, collaborative call with strong rapport and clear discussion of Big Spring Sale strategy, stock constraints, and listing/content work. Asif listened well, validated Christian’s priorities (top 80 / 95% revenue items), and showed good technical understanding of placements, inventory nuances, and international listing behavior. The main risks are around unprofitable ad spend on specific ASINs and the unresolved scope misunderstanding with Howard on creatives/SEO. To improve, Asif should firm up explicit next steps with owners and timelines (for the ASIN profitability review, J"}, {"date": "2026-03-26", "client": "Batchwell", "am": "Gabrielle Aboudi", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.29, "sent": "Positive", "quote": "Yeah, that sounds great… I think it makes sense. I totally get it.", "flags": "- No red flags detected", "gap": "- No explicit confirmation of exact SKUs to include/exclude in the Celico campaign (variety pack vs others) and how that ties to margin strategy", "summary": "This was a strong, collaborative call with clear positive buy-in from the client on both the commission-based creator testing model and the Celico review/sales campaign. Gabrielle listened closely to creative and product feedback, validated concerns, and translated them into concrete actions (creator coaching, targeted collab setup, outreach to TikTok support). The relationship and tone are excellent; the client feels heard and is actively contributing ideas and contacts. To level up, Gabrielle should tighten expectation-setting by explicitly confirming SKUs, budgets, and timelines for the Cel"}, {"date": "2026-03-30", "client": "Thrival", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "I like what you're doing, Asif. I think it's really smart.", "flags": "- Potential future inventory tightness with rapidly increasing sales and ongoing sale event (risk of stockouts if not closely managed)", "gap": "- No explicit owner and deadline restated for: (1) Amazon image/app approval fix, (2) infringement filing, and (3) updated inventory/replenishment plan review", "summary": "This was a strong, collaborative call with clear evidence of trust in Asif’s strategy and positive sentiment around performance (BSR gains, strong ROAS, and virality). Asif explained dayparting and CPC dynamics well, negotiated a data-driven compromise on ad timing, and aligned with the client on keeping spend efficient. Key strategic items were discussed, including app imagery approval, a dedicated app video, PickFu testing, and inventory planning amid rapid growth. To improve, Asif should close with a tighter verbal recap assigning owners and timelines for the image/app fix, infringement act"}, {"date": "2026-03-31", "client": "Loop Family", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 5.0, "exp": 5.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.43, "sent": "Positive", "quote": "I think that we need...data on what is our click through rate and our conversion rate with a phone frame versus exactly what we have now.", "flags": "- Client strongly dislikes one of the current video ads (“I hate that video”) and it’s still live, which could hurt brand perception and conversion.", "gap": "- No explicit owner or deadline was set for: (1) launching the main image A/B test, and (2) replacing/removing the disliked video asset.", "summary": "This was a focused, collaborative call with strong rapport and clear strategic insight from Asif on category benchmarks, conversion issues, and image testing options. The client was engaged, aligned on testing the main image, and open about bandwidth constraints and creative preferences. Key risks center on creative bottlenecks and leaving a disliked/low-quality video live, which could undermine performance during a high-traffic GMA and Mother’s Day window. As an improvement, the AM should formalize owners and timelines for the image experiment, video replacement, and 3D model deployment, and "}, {"date": "2026-04-01", "client": "July", "am": "Asif Nazir Sindhu", "sev": "ok", "cla": 4.0, "flo": 4.0, "lis": 4.0, "exp": 4.0, "exc": 4.0, "rel": 5.0, "out": 4.0, "avg": 4.14, "sent": "Positive", "quote": "As long as our ACOS is around 25, no more than 30 percent, I think we're happy to keep on spending.", "flags": "- Dependency on UK account reactivation and shareholder verification outside AGL's control (timeline risk).", "gap": "- No explicit owner or deadline set for confirming Prime Day deal strategy (who asks Nicole, by when, and how that feeds into planning).", "summary": "This was a short, efficient call with a positive, collaborative tone and clear trust in Asif’s guidance. Asif demonstrated solid expertise on TACoS targets, UK launch setup, and promotional strategy, while aligning on a £5k starting budget and profitability guardrails. The main risks are external (UK account verification) and some lightly defined next steps around Prime Day deals and UK storefront asset delivery. To improve, Asif could tighten ownership and timelines for Prime Day planning, UK store build, and launch milestones to ensure proactive follow-up and clearer accountability."}];
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+const DIMS = ['cla','flo','lis','exp','exc','rel','out'];
+const DIM_LABELS = ['Clarity','Flow','Listening','Expertise','Expectations','Relationship','Outcome'];
+
+function avg(arr){ return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function round1(n){ return Math.round(n*10)/10; }
+function scoreClass(v){
+  if(v<=1)return 's1'; if(v<=2)return 's2'; if(v<=3)return 's3'; if(v<=4)return 's4'; return 's5';
+}
+function heatClass(v){
+  if(v<2)return 'h1'; if(v<3)return 'h2'; if(v<3.5)return 'h3'; if(v<4.5)return 'h4'; return 'h5';
+}
+function sevBadge(s){
+  if(s==='alert') return '<span class="badge badge-alert">🔴 Alert</span>';
+  if(s==='watch') return '<span class="badge badge-watch">⚠️ Watch</span>';
+  return '<span class="badge badge-ok">🟢 OK</span>';
+}
+function sentBadge(s){
+  const sl=s.toLowerCase();
+  if(sl.includes('negative')) return '<span class="badge badge-alert">Negative</span>';
+  if(sl.includes('neutral')) return '<span class="badge badge-neutral">Neutral</span>';
+  return '<span class="badge badge-ok">Positive</span>';
+}
+function scoreCell(v){
+  return `<span class="sc sc${Math.round(v)}">${v}</span>`;
+}
+
+// ─── COMPUTE AM STATS ─────────────────────────────────────────────────────────
+function computeAMStats(){
+  const ams={};
+  ALL_CALLS.forEach(c=>{
+    if(!ams[c.am]) ams[c.am]={calls:[],alerts:0,watches:0};
+    ams[c.am].calls.push(c);
+    if(c.sev==='alert') ams[c.am].alerts++;
+    if(c.sev==='watch') ams[c.am].watches++;
+  });
+  return Object.entries(ams).map(([name,d])=>{
+    const dims={};
+    DIMS.forEach(dim=>{ dims[dim]=round1(avg(d.calls.map(c=>c[dim]))); });
+    const overall=round1(avg(DIMS.map(dim=>dims[dim])));
+    return {name,calls:d.calls,count:d.calls.length,alerts:d.alerts,watches:d.watches,dims,overall};
+  }).sort((a,b)=>b.overall-a.overall);
+}
+
+// ─── COMPUTE CLIENT STATS ─────────────────────────────────────────────────────
+function computeClientStats(){
+  const clients={};
+  ALL_CALLS.forEach(c=>{
+    const key=c.client.toLowerCase().replace(/\s+/g,' ').trim();
+    if(!clients[key]) clients[key]={name:c.client,am:c.am,calls:[]};
+    clients[key].calls.push(c);
+  });
+  return Object.values(clients).map(d=>{
+    const avgs=d.calls.map(c=>c.avg);
+    const best=Math.max(...avgs), worst=Math.min(...avgs);
+    const overall=round1(avg(avgs));
+    const haAlert=d.calls.some(c=>c.sev==='alert');
+    const haWatch=d.calls.some(c=>c.sev==='watch');
+    const sentiments=d.calls.map(c=>c.sent).filter(Boolean);
+    const posCount=sentiments.filter(s=>s.toLowerCase().includes('positive')).length;
+    const overallSent = posCount===sentiments.length ? 'Positive'
+      : posCount===0 ? 'Negative' : 'Mixed';
+    return {name:d.name,am:d.am,count:d.calls.length,overall,best:round1(best),worst:round1(worst),haAlert,haWatch,sentiment:overallSent,calls:d.calls};
+  }).sort((a,b)=>b.overall-a.overall);
+}
+
+// ─── GLOBAL STATS ─────────────────────────────────────────────────────────────
+const amStats = computeAMStats();
+const clientStats = computeClientStats();
+const alerts = ALL_CALLS.filter(c=>c.sev==='alert');
+const watches = ALL_CALLS.filter(c=>c.sev==='watch');
+const ok = ALL_CALLS.filter(c=>c.sev==='ok');
+const allAvg = round1(avg(ALL_CALLS.map(c=>c.avg)));
+const sorted = [...ALL_CALLS].sort((a,b)=>b.avg-a.avg);
+const bestCall = sorted[0], worstCall = sorted[sorted.length-1];
+const topAM = amStats[0];
+
+// ─── INIT OVERVIEW ────────────────────────────────────────────────────────────
+document.getElementById('s-ok').textContent = ok.length;
+document.getElementById('s-ok-pct').textContent = `${Math.round(ok.length/65*100)}% of total`;
+document.getElementById('s-alert').textContent = alerts.length;
+document.getElementById('s-watch').textContent = watches.length;
+document.getElementById('s-avg').textContent = allAvg;
+document.getElementById('s-best-call').textContent = bestCall.avg;
+document.getElementById('s-best-call-who').textContent = `${bestCall.client} · ${bestCall.am.split(' ')[0]}`;
+document.getElementById('s-worst-call').textContent = worstCall.avg;
+document.getElementById('s-worst-call-who').textContent = `${worstCall.client} · ${worstCall.am.split(' ')[0]}`;
+document.getElementById('s-top-am').textContent = topAM.overall;
+document.getElementById('s-top-am-who').textContent = topAM.name.split(' ')[0]+' '+topAM.name.split(' ')[1];
+
+// ─── HEATMAP ──────────────────────────────────────────────────────────────────
+const heatBody = document.getElementById('heatBody');
+amStats.forEach(am=>{
+  const tr = document.createElement('tr');
+  const scCells = DIMS.map(d=>`<td><span class="heat-cell ${heatClass(am.dims[d])}">${am.dims[d]}</span></td>`).join('');
+  const oc = heatClass(am.overall);
+  tr.innerHTML = `
+    <td><strong>${am.name}</strong></td>
+    <td>${am.count}</td>
+    ${scCells}
+    <td><span class="heat-cell ${oc}" style="width:48px;font-size:13px">${am.overall}</span></td>
+  `;
+  heatBody.appendChild(tr);
+});
+
+// ─── AM TABLE ─────────────────────────────────────────────────────────────────
+const amTableBody = document.getElementById('amTableBody');
+amStats.forEach(am=>{
+  const pct = Math.round(am.overall/5*100);
+  const color = am.overall>=4.5?'#6b3fa0':am.overall>=4?'#1f7a45':am.overall>=3.5?'#c07a00':'#d63c3c';
+  const status = am.alerts>0?'<span class="badge badge-alert">Monitor</span>':am.watches>0?'<span class="badge badge-watch">Watch</span>':'<span class="badge badge-ok">Solid</span>';
+  const dimCells = DIMS.map(d=>scoreCell(am.dims[d])).join('');
+  const tr = document.createElement('tr');
+  tr.style.cursor='pointer';
+  tr.onclick=()=>showAMDetail(am);
+  tr.innerHTML=`
+    <td><strong>${am.name}</strong><br><span style="font-size:11px;color:var(--text-muted)">${am.count} calls</span></td>
+    <td>${am.count}</td>
+    <td>
+      <div class="sbar-wrap">
+        <div class="sbar-bg"><div class="sbar-fill" style="width:${pct}%;background:${color}"></div></div>
+        <span class="sbar-val" style="color:${color}">${am.overall}</span>
+      </div>
+    </td>
+    ${dimCells}
+    <td><span style="color:var(--red);font-weight:700">${am.alerts||'—'}</span></td>
+    <td><span style="color:var(--amber);font-weight:700">${am.watches||'—'}</span></td>
+    <td>${status}</td>
+  `;
+  amTableBody.appendChild(tr);
+});
+
+// ─── CLIENT TABLE ─────────────────────────────────────────────────────────────
+let clientFilter='all';
+function filterClients(type,btn){
+  clientFilter=type;
+  document.querySelectorAll('#page-clients .flt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderClientTable();
+}
+function renderClientTable(){
+  const search=(document.getElementById('clientSearch').value||'').toLowerCase();
+  const tbody=document.getElementById('clientTableBody');
+  tbody.innerHTML='';
+  const filtered=clientStats.filter(c=>{
+    if(clientFilter==='alert' && !c.haAlert) return false;
+    if(clientFilter==='ok' && (c.haAlert||c.haWatch)) return false;
+    if(search && !c.name.toLowerCase().includes(search) && !c.am.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  filtered.forEach(c=>{
+    const sev=c.haAlert?'<span class="badge badge-alert">🔴 Alert</span>':c.haWatch?'<span class="badge badge-watch">⚠️ Watch</span>':'<span class="badge badge-ok">🟢 OK</span>';
+    const tr=document.createElement('tr');
+    if(c.haAlert) tr.classList.add('row-alert');
+    if(c.haWatch && !c.haAlert) tr.classList.add('row-watch');
+    tr.style.cursor='pointer';
+    tr.onclick=()=>showClientDetail(c);
+    const avgColor=c.overall>=4.5?'var(--purple)':c.overall>=4?'var(--green)':c.overall>=3.5?'var(--amber)':'var(--red)';
+    tr.innerHTML=`
+      <td><strong>${c.name}</strong></td>
+      <td style="font-size:12px">${c.am}</td>
+      <td>${c.count}</td>
+      <td><span style="font-weight:700;color:${avgColor}">${c.overall}</span></td>
+      <td><span style="color:var(--purple);font-weight:700">${c.best}</span></td>
+      <td><span style="color:var(--red);font-weight:700">${c.worst}</span></td>
+      <td>${sev}</td>
+      <td>${sentBadge(c.sentiment)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+renderClientTable();
+
+// ─── ALERT CARDS ──────────────────────────────────────────────────────────────
+const flaggedCalls=[...alerts,...watches].sort((a,b)=>a.avg-b.avg);
+const alertGrid=document.getElementById('alertGrid');
+flaggedCalls.forEach(c=>{
+  const div=document.createElement('div');
+  div.className=`alert-card ${c.sev}`;
+  div.style.cursor='pointer';
+  div.onclick=()=>showCallDetail(c);
+  const sevLabel=c.sev==='alert'?'<span class="badge badge-alert">🔴 Alert</span>':'<span class="badge badge-watch">⚠️ Watch</span>';
+  div.innerHTML=`
+    <div class="alert-top">
+      <div>
+        <div class="alert-client">${c.client}</div>
+        <div class="alert-meta">${c.am} · ${c.date}</div>
+      </div>
+      ${sevLabel}
+    </div>
+    <div class="alert-lbl">Red Flag</div>
+    <div class="alert-txt">${c.flags}</div>
+    <div class="alert-lbl">Communication Gap</div>
+    <div class="alert-txt">${c.gap}</div>
+    <div class="dim-row">
+      ${DIMS.map((d,i)=>`<div class="dim-cell"><div class="dim-v ${scoreClass(c[d])}">${c[d]}</div><div class="dim-l">${DIM_LABELS[i].substring(0,3)}</div></div>`).join('')}
+    </div>
+  `;
+  alertGrid.appendChild(div);
+});
+
+// Alert quotes
+const alertQuotesEl=document.getElementById('alertQuotes');
+flaggedCalls.filter(c=>c.quote&&c.quote.length>5).forEach(c=>{
+  const div=document.createElement('div');
+  div.className='quote-card';
+  div.innerHTML=`<div class="q-text">${c.quote}</div><div class="q-meta"><strong>${c.client}</strong> · <span>${c.am.split(' ')[0]}</span> · ${sevBadge(c.sev)}</div>`;
+  alertQuotesEl.appendChild(div);
+});
+
+// ─── COACHING ─────────────────────────────────────────────────────────────────
+const COACHING_DATA={
+  'Asif Nazir Sindhu':{
+    strengths:['Consistently highest relationship and listening scores (4.7–4.9 avg)','Deep Amazon expertise demonstrated across PPC, catalog, and compliance contexts','Strong adaptability — adjusts strategy live based on client feedback'],
+    growth:['Close every call with a verbal action recap: owner · item · date — currently flagged in 100% of calls','Expectation setting on Peppertree and Flintts Mints shows a gap: anchor projections earlier and in writing','For escalation accounts (Lumino), lead with the recovery plan before anything else']
+  },
+  'Daniel Gonzalez':{
+    strengths:['Highest relationship scores on the team — clients feel genuinely cared for','Strong at handling account health crises (GoBrewing, Modaura) with empathy and clarity','Collaborative multi-speaker calls run well under his management'],
+    growth:['Ghost call protocol needed urgently: when a client doesn\'t join, immediately message, convert to internal session, and confirm reschedule before hanging up','Flow scores (3.5 avg) suggest calls drift — use a tight agenda and stick to it','Expectations dimension (3.1) is his lowest — always confirm next steps, owners and dates before closing']
+  },
+  'Bradley Pierce':{
+    strengths:['Outstanding listening (4.9 avg) — clients feel heard and understood','Very strong at building rapport and trust; Snow called AGL "teammates" under his management','Expert at complex accounts like Brooklinen with large ad budgets and many stakeholders'],
+    growth:['Pre-call prep gaps: document comments, promo calendars and access permissions should be verified before client joins','Ops–AM handoff broke down on NCI (1-week delay discovered live on call) — implement a pre-call readiness check SOP','TFT: loosely structured calls need a closing recap with explicit owners and ETAs for all outstanding items']
+  },
+  'Aeris Del Mar':{
+    strengths:['Strong relationship building — highest Relationship score among newer AMs (4.8 avg)','Expertly handled a difficult performance conversation on HOME SO with transparency and structure','Good at cross-functional calls with PPC specialists and Amazon reps'],
+    growth:['Home So watchlist call lacked agenda structure — apply a standard opener when expected participants are absent','Closing recaps consistently lack explicit owner/date assignments across all evaluated calls','Kin Kind: SEO measurement and reporting process needs to be articulated clearly and proactively']
+  },
+    'Asad Nazir Sindhu':{
+    strengths:['Clean record — no alerts or watchlist flags across both evaluated calls','Strong expertise scores (4.5 avg) with thoughtful compliance and operational guidance','Clients leave calls feeling confident and supported (Painting4Real, Burlap Fabrics)'],
+    growth:['Owner/deadline summary at end of calls needs tightening — both calls flagged this gap','POA quality concern surfaced from Burlap Fabrics — update AGL\'s internal POA SOP based on client\'s successful template','Build toward more calls in the dataset before full coaching assessment can be made']
+  },
+  'Gabrielle Aboudi':{
+    strengths:['Excellent TikTok/influencer expertise — navigates creator strategy and platform mechanics confidently','Strong listening scores (4.7 avg) — picks up on client nuances around brand tone and product preferences','Modash.io call showed strong vendor evaluation skills and professional agency positioning'],
+    growth:['KPI and success metric definition at call close — TikTok launches need explicit targets (sales, impressions, GMV)','Sellico: close with a concrete follow-up date rather than "I\'ll rewatch and reach out"','Owner/timeline recap needed at end of every call — currently absent across all evaluated calls']
+  },
+  };
+
+const coachingGrid=document.getElementById('coachingGrid');
+amStats.filter(am=>COACHING_DATA[am.name]).forEach(am=>{
+  const cd=COACHING_DATA[am.name];
+  const div=document.createElement('div');
+  div.className='am-coaching-card';
+  const topDim=DIMS.reduce((a,b)=>am.dims[a]>=am.dims[b]?a:b);
+  const lowDim=DIMS.reduce((a,b)=>am.dims[a]<=am.dims[b]?a:b);
+  div.innerHTML=`
+    <div class="amc-name">${am.name}</div>
+    <div class="amc-score">${am.count} calls · <span class="amc-score-num">${am.overall}</span> avg</div>
+    <div class="strength-row">
+      <div class="coaching-lbl strength-lbl">Strengths</div>
+      ${cd.strengths.map(s=>`<div class="coaching-point str">${s}</div>`).join('')}
+    </div>
+    <div class="growth-row">
+      <div class="coaching-lbl growth-lbl">Growth Areas</div>
+      ${cd.growth.map(g=>`<div class="coaching-point gro">${g}</div>`).join('')}
+    </div>
+    <div class="perf-bar-wrap">
+      <div class="dim-bars">
+        ${DIMS.map((d,i)=>`
+          <div class="dim-bar-row">
+            <div class="dim-bar-label">${DIM_LABELS[i]}</div>
+            <div class="dim-bar-bg"><div class="dim-bar-fill" style="width:${am.dims[d]/5*100}%"></div></div>
+            <div class="dim-bar-val">${am.dims[d]}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  coachingGrid.appendChild(div);
+});
+
+// Best & Worst Calls
+const bwSection=document.getElementById('bestWorstSection');
+const top3=[...ALL_CALLS].sort((a,b)=>b.avg-a.avg).slice(0,3);
+const bot3=[...ALL_CALLS].sort((a,b)=>a.avg-b.avg).slice(0,3);
+bwSection.innerHTML=`
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+    <div class="card" style="border-top:3px solid var(--green)">
+      <div class="card-title">🏆 Top 3 Calls</div>
+      <div class="card-sub">Highest scores in the dataset</div>
+      ${top3.map(c=>`
+        <div class="call-item" onclick="showCallDetail(${JSON.stringify(c).replace(/"/g,'&quot;')})">
+          <div class="call-item-top">
+            <span><strong>${c.client}</strong></span>
+            <span class="call-item-score" style="color:var(--purple)">${c.avg}</span>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted)">${c.am} · ${c.date}</div>
+          <div class="call-item-sent" style="margin-top:4px;font-style:italic">"${c.quote.substring(0,80)}…"</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="card" style="border-top:3px solid var(--red)">
+      <div class="card-title">⚠️ Bottom 3 Calls</div>
+      <div class="card-sub">Lowest scores — require attention</div>
+      ${bot3.map(c=>`
+        <div class="call-item" onclick="showCallDetail(${JSON.stringify(c).replace(/"/g,'&quot;')})">
+          <div class="call-item-top">
+            <span><strong>${c.client}</strong></span>
+            <span class="call-item-score" style="color:var(--red)">${c.avg}</span>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted)">${c.am} · ${c.date}</div>
+          <div class="call-item-sent" style="margin-top:4px;font-style:italic">"${c.quote.substring(0,80)}…"</div>
+        </div>
+      `).join('')}
+    </div>
+  </div>
+`;
+
+// ─── LOG TABLE ────────────────────────────────────────────────────────────────
+let logFilter='all';
+function filterLog(type,btn){
+  logFilter=type;
+  document.querySelectorAll('#page-log .flt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLogTable();
+}
+function renderLogTable(){
+  const search=(document.getElementById('logSearch').value||'').toLowerCase();
+  const tbody=document.getElementById('logBody');
+  tbody.innerHTML='';
+  ALL_CALLS.filter(c=>{
+    if(logFilter!=='all' && c.sev!==logFilter) return false;
+    if(search && !c.client.toLowerCase().includes(search) && !c.am.toLowerCase().includes(search)) return false;
+    return true;
+  }).forEach(c=>{
+    const tr=document.createElement('tr');
+    if(c.sev==='alert') tr.classList.add('row-alert');
+    if(c.sev==='watch') tr.classList.add('row-watch');
+    tr.style.cursor='pointer';
+    tr.onclick=()=>showCallDetail(c);
+    const ac=c.avg>=4.5?'var(--purple)':c.avg>=4?'var(--green)':c.avg>=3.5?'var(--amber)':'var(--red)';
+    tr.innerHTML=`
+      <td style="white-space:nowrap;font-size:12px">${c.date}</td>
+      <td><strong>${c.client}</strong></td>
+      <td style="font-size:12px">${c.am}</td>
+      <td>${sevBadge(c.sev)}</td>
+      ${DIMS.map(d=>scoreCell(c[d])).join('')}
+      <td><span style="font-weight:700;color:${ac}">${c.avg}</span></td>
+      <td>${sentBadge(c.sent)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+renderLogTable();
+
+// ─── DETAIL PANELS ────────────────────────────────────────────────────────────
+function showCallDetail(c){
+  if(typeof c==='string') c=JSON.parse(c);
+  const panel=document.getElementById('detailContent');
+  panel.innerHTML=`
+    <div class="detail-client">${c.client}</div>
+    <div class="detail-am">${c.am} · ${c.date} · ${sevBadge(c.sev)}</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      ${DIMS.map((d,i)=>`<div class="dim-cell"><div class="dim-v ${scoreClass(c[d])}">${c[d]}</div><div class="dim-l">${DIM_LABELS[i].substring(0,4)}</div></div>`).join('')}
+      <div class="dim-cell"><div class="dim-v ${scoreClass(c.avg)}">${c.avg}</div><div class="dim-l">Avg</div></div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Call Summary</div>
+      <div class="detail-text">${c.summary}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Key Client Quote</div>
+      <div class="q-text" style="margin:0">${c.quote}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Red Flags</div>
+      <div class="detail-text" style="color:var(--red)">${c.flags}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Communication Gap</div>
+      <div class="detail-text" style="color:var(--amber)">${c.gap}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Sentiment</div>
+      <div>${sentBadge(c.sent)}</div>
+    </div>
+  `;
+  document.getElementById('detailOverlay').classList.add('open');
+}
+
+function showAMDetail(am){
+  const panel=document.getElementById('detailContent');
+  const cd=COACHING_DATA[am.name];
+  panel.innerHTML=`
+    <div class="detail-client">${am.name}</div>
+    <div class="detail-am">${am.count} calls · Overall avg ${am.overall} · ${am.alerts} alerts · ${am.watches} watchlist</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      ${DIMS.map((d,i)=>`<div class="dim-cell"><div class="dim-v ${scoreClass(am.dims[d])}">${am.dims[d]}</div><div class="dim-l">${DIM_LABELS[i].substring(0,4)}</div></div>`).join('')}
+    </div>
+    ${cd?`
+    <div class="detail-section">
+      <div class="detail-section-title">Strengths</div>
+      ${cd.strengths.map(s=>`<div class="coaching-point str" style="font-size:12px;margin-bottom:5px;display:flex;gap:7px">${s}</div>`).join('')}
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Growth Areas</div>
+      <div class="coaching-box" style="margin-top:0">
+        ${cd.growth.map(g=>`<div class="coaching-item">${g}</div>`).join('')}
+      </div>
+    </div>
+    `:''}
+    <div class="detail-section">
+      <div class="detail-section-title">Call History</div>
+      ${am.calls.sort((a,b)=>b.avg-a.avg).map(c=>`
+        <div class="call-item" onclick="showCallDetail(${JSON.stringify(c).replace(/"/g,'&quot;')})">
+          <div class="call-item-top">
+            <span><strong>${c.client}</strong></span>
+            <span class="call-item-score" style="color:${c.avg>=4?'var(--green)':c.avg>=3?'var(--amber)':'var(--red)'}">${c.avg} ${sevBadge(c.sev)}</span>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted)">${c.date} · ${sentBadge(c.sent)}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  document.getElementById('detailOverlay').classList.add('open');
+}
+
+function showClientDetail(c){
+  const panel=document.getElementById('detailContent');
+  const sev=c.haAlert?'<span class="badge badge-alert">Has Alert</span>':c.haWatch?'<span class="badge badge-watch">Watchlist</span>':'<span class="badge badge-ok">Clean</span>';
+  const callsSorted=[...c.calls].sort((a,b)=>b.avg-a.avg);
+  panel.innerHTML=`
+    <div class="detail-client">${c.name}</div>
+    <div class="detail-am">${c.am} · ${c.count} calls · Avg ${c.overall} ${sev}</div>
+    <div style="display:flex;gap:16px;margin-top:14px;flex-wrap:wrap">
+      <div><div style="font-size:11px;color:var(--text-muted)">Best Call</div><div style="font-weight:700;color:var(--purple);font-size:20px">${c.best}</div></div>
+      <div><div style="font-size:11px;color:var(--text-muted)">Worst Call</div><div style="font-weight:700;color:var(--red);font-size:20px">${c.worst}</div></div>
+      <div><div style="font-size:11px;color:var(--text-muted)">Sentiment</div><div style="margin-top:4px">${sentBadge(c.sentiment)}</div></div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Call History (Best → Worst)</div>
+      ${callsSorted.map(call=>`
+        <div class="call-item" onclick="showCallDetail(${JSON.stringify(call).replace(/"/g,'&quot;')})">
+          <div class="call-item-top">
+            <span>${call.date}</span>
+            <span class="call-item-score" style="color:${call.avg>=4?'var(--purple)':call.avg>=3?'var(--amber)':'var(--red)'}">${call.avg} ${sevBadge(call.sev)}</span>
+          </div>
+          <div class="call-item-sent" style="margin-top:4px;font-style:italic">"${call.quote.substring(0,100)}…"</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  document.getElementById('detailOverlay').classList.add('open');
+}
+
+function closeDetail(e){
+  if(!e||e.target===document.getElementById('detailOverlay')||e.currentTarget!==document.getElementById('detailOverlay')){
+    if(!e||e.target===document.getElementById('detailOverlay')||e.type==='click' && !document.getElementById('detailPanel').contains(e.target)){
+      document.getElementById('detailOverlay').classList.remove('open');
+    }
+  }
+}
+document.getElementById('detailOverlay').addEventListener('click',function(e){
+  if(e.target===this) this.classList.remove('open');
+});
+
+// ─── CHARTS ───────────────────────────────────────────────────────────────────
+Chart.defaults.font.family="'DM Sans',sans-serif";
+Chart.defaults.font.size=12;
+Chart.defaults.color='#9483ba';
+
+const PURPLE='#6b3fa0';
+const PURPLE_LIGHT='#b89ce0';
+const RED='#d63c3c';
+const AMBER='#c07a00';
+const GREEN='#1f7a45';
+const BORDER='#ddd8f5';
+
+// Dimension averages
+const dimAvgs=DIMS.map(d=>round1(avg(ALL_CALLS.map(c=>c[d]))));
+new Chart(document.getElementById('dimChart'),{
+  type:'bar',
+  data:{
+    labels:DIM_LABELS,
+    datasets:[{
+      label:'Team Avg',
+      data:dimAvgs,
+      backgroundColor:dimAvgs.map(v=>v<3.5?'rgba(214,60,60,0.6)':v<4?'rgba(192,122,0,0.6)':'rgba(107,63,160,0.6)'),
+      borderWidth:0,borderRadius:4,
+    }]
+  },
+  options:{
+    indexAxis:'y',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x} / 5`}}},
+    scales:{
+      x:{min:0,max:5,grid:{color:BORDER},ticks:{color:'#9483ba'}},
+      y:{grid:{display:false},ticks:{color:'#5c4b7a'}}
+    }
+  }
+});
+
+// Alerts by AM
+const amAlertData=amStats.filter(am=>am.alerts>0||am.watches>0);
+new Chart(document.getElementById('alertChart'),{
+  type:'bar',
+  data:{
+    labels:amAlertData.map(am=>am.name.split(' ')[0]+' '+am.name.split(' ')[1]),
+    datasets:[
+      {label:'🔴 Alerts',data:amAlertData.map(am=>am.alerts),backgroundColor:'rgba(214,60,60,0.7)',borderWidth:0,borderRadius:4},
+      {label:'⚠️ Watch',data:amAlertData.map(am=>am.watches),backgroundColor:'rgba(192,122,0,0.6)',borderWidth:0,borderRadius:4}
+    ]
+  },
+  options:{
+    plugins:{legend:{labels:{color:'#9483ba',boxWidth:12,padding:14}}},
+    scales:{
+      x:{grid:{display:false},stacked:true,ticks:{color:'#5c4b7a'}},
+      y:{stacked:true,grid:{color:BORDER},ticks:{color:'#9483ba',stepSize:1}}
+    }
+  }
+});
+
+// Trend
+const months={'2025-12':{sum:0,n:0},'2026-01':{sum:0,n:0},'2026-02':{sum:0,n:0},'2026-03':{sum:0,n:0},'2026-04':{sum:0,n:0}};
+ALL_CALLS.forEach(c=>{const m=c.date.substring(0,7);if(months[m]){months[m].sum+=c.avg;months[m].n++;}});
+const monthLabels=['Dec 25','Jan 26','Feb 26','Mar 26','Apr 26'];
+const monthVals=Object.values(months).map(m=>m.n?round1(m.sum/m.n):null);
+new Chart(document.getElementById('trendChart'),{
+  type:'line',
+  data:{
+    labels:monthLabels,
+    datasets:[{
+      label:'Avg Score',
+      data:monthVals,
+      borderColor:PURPLE,
+      backgroundColor:'rgba(107,63,160,0.07)',
+      pointBackgroundColor:PURPLE,
+      pointRadius:6,pointHoverRadius:8,
+      tension:0.35,fill:true,borderWidth:2
+    }]
+  },
+  options:{
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.y} / 5`}}},
+    scales:{
+      x:{grid:{color:BORDER},ticks:{color:'#5c4b7a'}},
+      y:{min:3.5,max:4.8,grid:{color:BORDER},ticks:{color:'#9483ba'}}
+    }
+  }
+});
+
+// ─── PAGE ROUTING ──────────────────────────────────────────────────────────────
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
